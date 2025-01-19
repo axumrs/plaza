@@ -1,0 +1,11 @@
+addr = "0.0.0.0:9527"
+url_prefix = "http://127.0.0.1:9527"
+
+[activation_code]
+resend_duration = 180  # 3分钟
+expire_duration = 1800 # 30分钟
+
+[[mails]]
+smtp = "mail.cock.li"
+user = "user@cock.li"
+password = "password"

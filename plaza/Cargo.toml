@@ -10,3 +10,12 @@ homepage = "https://axum.rs/subject/plaza"
 description = "AXUM中文网专题：使用axum打造分布式商城"
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
+axum = { version = "0.8" }
+serde = { version = "1", features = ["derive"] }
+config = { version = "0.15", features = ["toml"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+rand = "0.8"
+anyhow = "1"
+thiserror = "2"
