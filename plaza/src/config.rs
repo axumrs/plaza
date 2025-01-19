@@ -24,9 +24,9 @@ pub struct Config {
 #[derive(Deserialize)]
 pub struct ActivationCode {
     /// 重新发送间隔
-    pub resend_duration: u64,
+    pub resend_duration: u32,
     /// 过期时长
-    pub expire_duration: u64,
+    pub expire_duration: u32,
     /// 最大重试次数
     pub max_retry_count: u8,
 }

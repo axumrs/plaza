@@ -29,6 +29,9 @@ pub enum Error {
     #[error("{0}")]
     ChronoError(#[from] chrono::ParseError),
 
+    #[error("{0}")]
+    FromUtf8Error(#[from] std::string::FromUtf8Error),
+
     /// 其它错误，来源于`anyhow::Error`
     #[error(transparent)]
     Other(#[from] anyhow::Error),
