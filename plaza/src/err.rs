@@ -11,6 +11,12 @@ pub enum Error {
     #[error("配置文件错误: {0}")]
     ConfigError(#[from] ::config::ConfigError),
 
+    #[error("{0}")]
+    LettreError(#[from] lettre::error::Error),
+
+    #[error("{0}")]
+    LettreSmtpError(#[from] lettre::transport::smtp::Error),
+
     /// 其它错误，来源于`anyhow::Error`
     #[error(transparent)]
     Other(#[from] anyhow::Error),
