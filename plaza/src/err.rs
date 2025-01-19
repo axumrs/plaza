@@ -17,6 +17,9 @@ pub enum Error {
     #[error("{0}")]
     LettreSmtpError(#[from] lettre::transport::smtp::Error),
 
+    #[error("{0}")]
+    ReqwestError(#[from] reqwest::Error),
+
     /// 其它错误，来源于`anyhow::Error`
     #[error(transparent)]
     Other(#[from] anyhow::Error),

@@ -14,6 +14,7 @@ pub struct Config {
     pub activation_code: ActivationCode,
     /// 邮箱配置
     pub mails: Vec<Mail>,
+    pub turnstile: Turnstile,
 }
 
 /// 激活码配置
@@ -34,6 +35,12 @@ pub struct Mail {
     pub user: String,
     /// 邮箱密码
     pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct Turnstile {
+    pub secret_key: String,
+    pub timeout: u8,
 }
 
 impl Config {
