@@ -14,7 +14,10 @@ pub struct Config {
     pub activation_code: ActivationCode,
     /// 邮箱配置
     pub mails: Vec<Mail>,
+    /// Turnstile 配置
     pub turnstile: Turnstile,
+    /// 数据库配置
+    pub database: Database,
 }
 
 /// 激活码配置
@@ -24,6 +27,8 @@ pub struct ActivationCode {
     pub resend_duration: u64,
     /// 过期时长
     pub expire_duration: u64,
+    /// 最大重试次数
+    pub max_retry_count: u8,
 }
 
 /// 邮箱配置
@@ -39,8 +44,18 @@ pub struct Mail {
 
 #[derive(Deserialize)]
 pub struct Turnstile {
+    /// Turnstile 秘钥
     pub secret_key: String,
+    /// 验证超时，秒
     pub timeout: u8,
+}
+
+#[derive(Deserialize)]
+pub struct Database {
+    /// 数据库连接字符串
+    pub dsn: String,
+    /// 最大连接数
+    pub max_conns: u32,
 }
 
 impl Config {

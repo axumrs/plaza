@@ -20,6 +20,15 @@ pub enum Error {
     #[error("{0}")]
     ReqwestError(#[from] reqwest::Error),
 
+    #[error("{0}")]
+    SqlxError(#[from] sqlx::Error),
+
+    #[error("{0}")]
+    BcryptError(#[from] bcrypt::BcryptError),
+
+    #[error("{0}")]
+    ChronoError(#[from] chrono::ParseError),
+
     /// 其它错误，来源于`anyhow::Error`
     #[error(transparent)]
     Other(#[from] anyhow::Error),
