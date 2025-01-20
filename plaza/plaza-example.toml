@@ -1,11 +1,23 @@
 addr = "0.0.0.0:9527"
 url_prefix = "http://127.0.0.1:9527"
 
+[user]
+should_verify_email = true
+
 [activation_code]
 resend_duration = 180  # 3分钟
 expire_duration = 1800 # 30分钟
+max_retry_count = 10   # 最大重试次数
 
 [[mails]]
 smtp = "mail.cock.li"
-user = "user@cock.li"
-password = "password"
+user = "<USER>@cock.li"
+password = "<PASSWORD>"
+
+[turnstile]
+secret_key = '1x0000000000000000000000000000000AA'
+timeout = 10
+
+[database]
+dsn = 'postgres://plaza:plaza@127.0.0.1:5432/plaza?sslmode=disable'
+max_conns = 5
