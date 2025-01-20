@@ -35,16 +35,31 @@ pub struct User {
 
 impl User {
     /// 尝试创建
-    pub fn try_new(
+    pub fn try_new_with_nickname(
         email: String,
         password: String,
-        nickname: String,
         status: UserStatus,
+        nickname: Option<String>,
     ) -> Result<Self> {
         let password = util::pwd::hash(&password)?;
         let now = util::dt::now();
+        let id = util::id::new();
+
+        // 默认昵称：`用户+ID`
+        let default_nickname = format!("用户{}", id.to_uppercase());
+        // 处理昵称
+        let nickname = if let Some(nickname) = nickname {
+            // 如果昵称过长，则使用默认昵称
+            if nickname.len() > 30 {
+                default_nickname
+            } else {
+                nickname
+            }
+        } else {
+            default_nickname
+        };
         Ok(User {
-            id: util::id::new(),
+            id,
             email,
             password,
             nickname,
@@ -52,6 +67,9 @@ impl User {
             created_at: now,
             updated_at: now,
         })
+    }
+    pub fn try_new(email: String, password: String, status: UserStatus) -> Result<Self> {
+        Self::try_new_with_nickname(email, password, status, None)
     }
 }
 

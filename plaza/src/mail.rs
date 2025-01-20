@@ -38,13 +38,14 @@ impl Data {
 pub async fn send(
     sender: impl Into<String>,
     password: impl Into<String>,
-    smtp: &str,
-    m: &Data,
+    smtp: impl Into<String>,
+    m: Data,
 ) -> Result<Response> {
     let sender: String = sender.into();
+    let smtp: String = smtp.into();
     let message = m.to_message(&sender)?;
     let creds = Credentials::new(sender, password.into());
-    let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay(smtp)?
+    let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay(&smtp)?
         .credentials(creds)
         .build();
     let res = mailer.send(message).await?;
@@ -62,7 +63,7 @@ mod tests {
         let cfg = config::Config::from_toml().unwrap();
         let mail_cfg = cfg.get_mail().unwrap();
         let m = Data::new("你好，世界", "欢迎使用商城", "team@mail.axum.eu.org");
-        let res = send(&mail_cfg.user, &mail_cfg.password, &mail_cfg.smtp, &m).await;
+        let res = send(&mail_cfg.user, &mail_cfg.password, &mail_cfg.smtp, m).await;
         assert!(res.is_ok());
     }
 }

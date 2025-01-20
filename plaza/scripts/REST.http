@@ -1,0 +1,17 @@
+@baseUrl = http://127.0.0.1:9527
+@captcha = XXXX.DUMMY.TOKEN.XXXX
+
+### 用户注册
+POST {{baseUrl}}/auth/register/user
+Content-Type: application/json
+
+{
+    "email":"team@axum.now.cc",
+    "password":"axum.rs",
+    "re_password":"axum.rs",
+    "captcha":"{{captcha}}"
+}
+
+### 用户激活
+GET {{baseUrl}}/auth/active/user/923427
+Content-Type: application/json

@@ -18,6 +18,8 @@ pub struct Config {
     pub turnstile: Turnstile,
     /// 数据库配置
     pub database: Database,
+    /// 用户配置
+    pub user: User,
 }
 
 /// 激活码配置
@@ -56,6 +58,12 @@ pub struct Database {
     pub dsn: String,
     /// 最大连接数
     pub max_conns: u32,
+}
+
+#[derive(Deserialize)]
+pub struct User {
+    /// 是否需要验证邮箱
+    pub should_verify_email: bool,
 }
 
 impl Config {

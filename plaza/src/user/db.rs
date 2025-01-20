@@ -146,11 +146,11 @@ mod tests {
     #[tokio::test]
     async fn should_create_user() {
         let pool = get_pool().await.unwrap();
-        let m = super::model::User::try_new(
+        let m = super::model::User::try_new_with_nickname(
             format!("team@axum.rs"),
             format!("axum.rs"),
-            format!("AXUM中文网"),
             model::UserStatus::Actived,
+            Some(format!("AXUM中文网")),
         )
         .unwrap();
         let m = model::User {

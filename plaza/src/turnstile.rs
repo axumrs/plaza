@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use serde::Deserialize;
 
-use crate::Result;
+use crate::{config, Result};
 
 const VERIFY_URL: &str = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
@@ -37,6 +37,12 @@ impl<'a> Turnstile<'a> {
 
         Ok(res)
     }
+}
+
+pub async fn verify(token: &str, cfg: &config::Turnstile) -> Result<bool> {
+    let t = Turnstile::try_new(&cfg.secret_key, cfg.timeout)?;
+    let res = t.verify(token).await?;
+    Ok(res.success)
 }
 
 #[cfg(test)]
