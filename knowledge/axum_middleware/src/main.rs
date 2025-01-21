@@ -8,7 +8,8 @@ async fn main() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .layer(middleware::from_fn(mid::req_time));
+        .layer(middleware::from_fn(mid::req_time))
+        .layer(middleware::from_fn(mid::get_auth_token));
 
     let listener = TcpListener::bind(addr).await?;
 
