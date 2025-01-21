@@ -53,11 +53,14 @@ async fn solo_mid_index_handler(
 fn chain_mid_router_init(state: Arc<AppState>) -> Router {
     Router::new()
         .route("/", get(chain_mid_index_handler))
-        .layer(middleware::from_extractor_with_state::<
-            mid::TokenAndPgNow,
-            Arc<AppState>,
-        >(state.clone()))
-        .layer(middleware::from_fn(mid::chain_get_auth_token))
+        .layer(
+            tower::ServiceBuilder::new()
+                .layer(middleware::from_fn(mid::chain_get_auth_token))
+                .layer(middleware::from_extractor_with_state::<
+                    mid::TokenAndPgNow,
+                    Arc<AppState>,
+                >(state.clone())),
+        )
         .with_state(state)
 }
 
