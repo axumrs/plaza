@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::sync::Arc;
 
 use axum::{middleware, response::IntoResponse, routing::get, Router};
@@ -13,8 +15,19 @@ async fn main() -> anyhow::Result<()> {
 
     let addr = "0.0.0.0:9527";
 
-    let app = Router::new()
-        .route("/", get(index_handler))
+    let app = chain_mid_router_init(state);
+
+    let listener = TcpListener::bind(addr).await?;
+
+    println!("Listening on {}", addr);
+    axum::serve(listener, app).await?;
+
+    Ok(())
+}
+
+fn solo_mid_router_init(state: Arc<AppState>) -> Router {
+    Router::new()
+        .route("/", get(solo_mid_index_handler))
         .layer(middleware::from_fn(mid::req_time))
         .layer(middleware::from_fn(mid::get_auth_token))
         .layer(middleware::from_fn_with_state(
@@ -26,21 +39,34 @@ async fn main() -> anyhow::Result<()> {
             mid::AuthToken,
             Arc<AppState>,
         >(state.clone()))
-        .with_state(state);
-
-    let listener = TcpListener::bind(addr).await?;
-
-    println!("Listening on {}", addr);
-    axum::serve(listener, app).await?;
-
-    Ok(())
+        .with_state(state)
 }
-
-async fn index_handler(
+async fn solo_mid_index_handler(
     mid::AuthToken(token): mid::AuthToken,
     mid::PgNow(now): mid::PgNow,
 ) -> impl IntoResponse {
     println!("从extractor中间件中获取鉴权令牌: {:?}", token);
     println!("从extractor中间件中获取数据库时间: {}", now);
+    "Hello, World! "
+}
+
+fn chain_mid_router_init(state: Arc<AppState>) -> Router {
+    Router::new()
+        .route("/", get(chain_mid_index_handler))
+        .layer(middleware::from_extractor_with_state::<
+            mid::TokenAndPgNow,
+            Arc<AppState>,
+        >(state.clone()))
+        .layer(middleware::from_fn(mid::chain_get_auth_token))
+        .with_state(state)
+}
+
+async fn chain_mid_index_handler(
+    mid::TokenAndPgNow { token, now }: mid::TokenAndPgNow,
+) -> impl IntoResponse {
+    println!(
+        "从extractor中间件中获取鉴权令牌: {}, 数据库时间: {}",
+        token, now
+    );
     "Hello, World! "
 }
