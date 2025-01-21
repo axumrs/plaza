@@ -22,6 +22,10 @@ async fn main() -> anyhow::Result<()> {
             mid::get_time_from_pg,
         ))
         .layer(middleware::from_extractor::<mid::AuthToken>())
+        .layer(middleware::from_extractor_with_state::<
+            mid::AuthToken,
+            Arc<AppState>,
+        >(state.clone()))
         .with_state(state);
 
     let listener = TcpListener::bind(addr).await?;
@@ -32,7 +36,11 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn index_handler(mid::AuthToken(token): mid::AuthToken) -> impl IntoResponse {
+async fn index_handler(
+    mid::AuthToken(token): mid::AuthToken,
+    mid::PgNow(now): mid::PgNow,
+) -> impl IntoResponse {
     println!("从extractor中间件中获取鉴权令牌: {:?}", token);
+    println!("从extractor中间件中获取数据库时间: {}", now);
     "Hello, World! "
 }
