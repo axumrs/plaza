@@ -15,6 +15,10 @@ async fn main() -> anyhow::Result<()> {
 
     let addr = "0.0.0.0:9527";
 
+    // 多个独立中间件
+    // let app = solo_mid_router_init(state);
+
+    // 中间件之间共享数据
     let app = chain_mid_router_init(state);
 
     let listener = TcpListener::bind(addr).await?;
@@ -36,7 +40,7 @@ fn solo_mid_router_init(state: Arc<AppState>) -> Router {
         ))
         .layer(middleware::from_extractor::<mid::AuthToken>())
         .layer(middleware::from_extractor_with_state::<
-            mid::AuthToken,
+            mid::PgNow,
             Arc<AppState>,
         >(state.clone()))
         .with_state(state)
