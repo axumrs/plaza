@@ -1,6 +1,7 @@
 pub mod activation_code;
 pub mod config;
 mod err;
+pub mod jwt;
 pub mod mail;
 pub mod resp;
 pub mod router;

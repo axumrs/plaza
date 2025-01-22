@@ -32,4 +32,5 @@ sqlx = { version = "0.8", features = [
 ] }
 xid = "1"
 bcrypt = "0.16"
-validator = { version = "0.19", features = ["derive"] }
+validator = { version = "0.20", features = ["derive"] }
+jsonwebtoken = "9"

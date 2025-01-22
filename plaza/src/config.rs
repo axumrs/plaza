@@ -20,6 +20,8 @@ pub struct Config {
     pub database: Database,
     /// 用户配置
     pub user: User,
+    /// 用户 JWT 配置
+    pub user_jwt: Jwt,
 }
 
 /// 激活码配置
@@ -64,6 +66,17 @@ pub struct Database {
 pub struct User {
     /// 是否需要验证邮箱
     pub should_verify_email: bool,
+}
+
+/// JWT 配置
+#[derive(Deserialize)]
+pub struct Jwt {
+    /// JWT 秘钥
+    pub secret: String,
+    /// JWT 过期时长，秒
+    pub expire_duration: u32,
+    /// JWT 子标识
+    pub sub: String,
 }
 
 impl Config {
