@@ -15,3 +15,14 @@ Content-Type: application/json
 ### 用户激活
 GET {{baseUrl}}/auth/active/user/923427
 Content-Type: application/json
+
+### 用户登录
+### @name user_login
+POST {{baseUrl}}/auth/login/user
+Content-Type: application/json
+
+{
+    "email":"team@axum.now.cc",
+    "password":"axum.rs",
+    "captcha":"{{captcha}}"
+}

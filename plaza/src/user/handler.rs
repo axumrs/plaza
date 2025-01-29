@@ -4,7 +4,11 @@ use axum::{
 };
 use validator::Validate;
 
-use crate::{activation_code, mail, resp, turnstile, util::dt, ArcAppState, Result};
+use crate::{
+    activation_code, jwt, login_log, mail, mid, resp, turnstile,
+    util::{self, dt},
+    ArcAppState, Error, Result,
+};
 
 use super::{db, form, model, service};
 
@@ -157,4 +161,76 @@ pub async fn activate(
     tx.commit().await?;
 
     resp::aff(rows)
+}
+
+// 登录
+pub async fn login(
+    State(state): State<ArcAppState>,
+    cli: mid::HttpClient,
+    Json(frm): Json<form::LoginForm>,
+) -> Result<resp::JsonResp<String>> {
+    frm.validate()?;
+
+    if !turnstile::verify(&frm.captcha, &state.cfg.turnstile).await? {
+        return Err(anyhow::anyhow!("人机验证失败").into());
+    }
+
+    let mut tx = state.pool.begin().await?;
+
+    // 查找用户
+    let user = match db::find(
+        &mut *tx,
+        &model::FindFilter {
+            by: model::FindBy::Email(frm.email.clone()),
+            status: None,
+        },
+    )
+    .await
+    {
+        Ok(v) => match v {
+            Some(v) => v,
+            None => return Err(Error::NotFound("用户名/密码错误".into())),
+        },
+        Err(e) => {
+            tx.rollback().await?;
+            return Err(e.into());
+        }
+    };
+    // 用户状态
+    if !matches!(user.status, model::UserStatus::Actived) {
+        return Err(anyhow::anyhow!("用户未激活").into());
+    }
+    // 验证密码
+    if !util::pwd::verify(&frm.password, &user.password)? {
+        return Err(anyhow::anyhow!("用户名/密码错误").into());
+    }
+    // 登录日志
+    if let Err(e) = login_log::db::insert(
+        &mut *tx,
+        &login_log::model::LoginLog::new_user(user.id.clone(), &cli.ip, &cli.loc, &cli.user_agent),
+    )
+    .await
+    {
+        tx.rollback().await?;
+        return Err(e.into());
+    }
+
+    // 生成JWT
+    let data = jwt::ClaimsData::User(jwt::UserClaimsData {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+    });
+    let token = jwt::token(
+        data,
+        &state.cfg.user_jwt.secret,
+        &state.cfg.user_jwt.sub,
+        state.cfg.user_jwt.expire_duration,
+        &cli.ip,
+        &cli.user_agent,
+    )?;
+
+    tx.commit().await?;
+
+    resp::ok(token.to_string())
 }

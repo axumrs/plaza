@@ -120,8 +120,8 @@ pub struct Token(String);
 
 impl Token {
     /// 获取字符串
-    pub fn to_str(&self) -> &str {
-        &self.0
+    pub fn to_string(self) -> String {
+        self.0
     }
 }
 
@@ -181,7 +181,7 @@ mod tests {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.142.86 Safari/537.36",
         )
         .unwrap();
-        assert_eq!("", token.to_str());
+        assert_eq!("", token.to_string());
     }
     #[test]
     fn test_jwt_get_claims() {
