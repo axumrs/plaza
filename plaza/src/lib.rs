@@ -4,6 +4,7 @@ mod err;
 pub mod jwt;
 pub mod login_log;
 pub mod mail;
+pub mod mid;
 pub mod resp;
 pub mod router;
 mod state;

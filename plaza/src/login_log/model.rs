@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{util, DateTime, PaginationRange};
+use crate::{util, DateTime, HttpClient, PaginationRange};
 
 /// 登录用户类型
 #[derive(Debug, Default, Serialize, Deserialize, sqlx::Type, Clone)]
@@ -15,17 +15,6 @@ pub enum LoginUserKind {
     Admin,
 }
 
-/// 登录日志客户端信息
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct LoginLogClient {
-    /// IP地址
-    pub ip: String,
-    /// 地理位置
-    pub loc: String,
-    /// 用户代理
-    pub user_agent: String,
-}
-
 /// 登录日志
 #[derive(Debug, Default, Serialize, Deserialize, sqlx::FromRow)]
 pub struct LoginLog {
@@ -35,7 +24,7 @@ pub struct LoginLog {
     /// 用户类型
     pub user_kind: LoginUserKind,
     /// 客户端
-    pub client: sqlx::types::Json<LoginLogClient>,
+    pub client: sqlx::types::Json<HttpClient>,
     /// 登录时间
     pub created_at: DateTime,
 }
@@ -53,7 +42,7 @@ impl LoginLog {
             id: util::id::new(),
             user_id: user_id.into(),
             user_kind,
-            client: sqlx::types::Json(LoginLogClient {
+            client: sqlx::types::Json(HttpClient {
                 ip: ip.into(),
                 loc: loc.into(),
                 user_agent: user_agent.into(),

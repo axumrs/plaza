@@ -37,6 +37,14 @@ pub enum Error {
     #[error("验证失败：{0}")]
     ValidateError(#[from] validator::ValidationErrors),
 
+    // jwt
+    #[error("JWT错误：{0}")]
+    JwtError(#[from] jsonwebtoken::errors::Error),
+
+    /// 未授权
+    #[error("{0}")]
+    Unauthorized(String),
+
     /// 其它错误，来源于`anyhow::Error`
     #[error(transparent)]
     Other(#[from] anyhow::Error),
