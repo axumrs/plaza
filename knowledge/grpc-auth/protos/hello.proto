@@ -1,0 +1,15 @@
+syntax = "proto3";
+package hello; // rust 会根据此定义生成 mod
+// 定义 Greeter 服务
+service Greeter {
+  // 发送问候
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+// 发送问候的请求，包含用户的名字
+message HelloRequest {
+  string name = 1;
+}
+// 问候的响应
+message HelloReply {
+  string message = 1;
+}
