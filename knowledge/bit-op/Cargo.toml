@@ -1,0 +1,13 @@
+[package]
+name = "bit-op"
+version = "0.1.0"
+edition = "2021"
+authors = ["axum.rs <team@axum.rs>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/axumrs/plaza"
+homepage = "https://axum.rs/subject/plaza"
+description = "AXUM中文网专题：使用axum打造分布式商城"
+
+[dependencies]
+bitflags = "2.8"
