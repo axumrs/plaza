@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS "users"(
+	"id" SERIAL PRIMARY KEY,
+    "username" VARCHAR(50) NOT NULL UNIQUE,
+    "nickname" VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "user_accounts"(
+    "balance" INTEGER NOT NULL DEFAULT 0
+) INHERITS ("users");

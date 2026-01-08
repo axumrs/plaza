@@ -1,0 +1,29 @@
+### 列表
+GET http://127.0.0.1:9527
+
+### 添加
+POST http://127.0.0.1:9527
+Content-Type: application/json
+
+{
+    "username":"axum",
+    "nickname":"AXUM中文网",
+    "balance":123
+}
+
+### 修改
+PUT  http://127.0.0.1:9527/1
+Content-Type: application/json
+
+{
+    "nickname":"AXUM中文网!",
+    "balance":1231
+}
+
+### 详情
+GET  http://127.0.0.1:9527/1
+Content-Type: application/json
+
+### 删除
+DELETE  http://127.0.0.1:9527/1
+Content-Type: application/json
