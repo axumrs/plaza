@@ -1,0 +1,14 @@
+### 获取配置
+GET http://127.0.0.1:9527
+Content-Type: application/json
+
+### 更新配置
+PUT http://127.0.0.1:9527
+Content-Type: application/json
+
+{
+  "web_addr": "0.0.0.0:9527",
+  "database_url": "postgres://postgres:postgres@localhost:5432/postgres",
+  "timeout": 60,
+  "disabled_register": false
+}
