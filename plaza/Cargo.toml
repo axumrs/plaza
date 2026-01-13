@@ -1,0 +1,40 @@
+[package]
+name = "plaza"
+version = "0.1.0"
+edition = "2024"
+authors = ["axum中文网 <team@mail.axum.eu.org>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/axumrs/plaza"
+homepage = "https://axum.eu.org"
+description = "axum中文网专题《使用axum打造分布式商城》"
+
+[dependencies]
+anyhow = "1.0.100"
+axum = "0.8.8"
+chrono = { version = "0.4.42", features = ["serde"] }
+prost = "0.14.3"
+prost-types = "0.14.3"
+serde = { version = "1.0.228", features = ["derive"] }
+sqlx = { version = "0.8.6", features = [
+    "runtime-tokio",
+    "postgres",
+    "chrono",
+    "json",
+] }
+thiserror = "2.0.17"
+tokio = { version = "1.49.0", features = [
+    "rt-multi-thread",
+    "macros",
+    "time",
+    "net",
+    "signal",
+] }
+tonic = "0.14.2"
+tonic-prost = "0.14.2"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+
+[build-dependencies]
+anyhow = "1.0.100"
+tonic-prost-build = "0.14.2"

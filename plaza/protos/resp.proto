@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package resp;
+
+message IdReply {
+    string id = 1;
+}
+
+message AffReply {
+    int64 rows = 1;
+}

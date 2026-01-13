@@ -1,0 +1,71 @@
+syntax = "proto3";
+package user;
+
+import "user_message.proto";
+import "resp.proto";
+import "req.proto";
+import "paginate.proto";
+import "range.proto";
+
+// 获取单个用户
+message GetUserRequest{
+    oneof by {
+        string id = 1;
+        string email = 2;
+    }
+    optional UserStatus status = 3;
+}
+message GetUserReply{
+    optional User user = 1;
+}
+
+// 用户列表
+message ListUserRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string email = 2;
+    optional string nickname = 3;
+    optional UserStatus status = 4;
+    optional range.DateRange date_range = 5;
+}
+message ListUserReply{
+    paginate.Paginate paginate = 1;
+    repeated User users = 2;
+}
+
+// 用户是否存在
+message UserExistsRequest {
+  string email = 1;
+  optional string id = 2;
+}
+message UserExistsResponse { bool is_exists = 1; }
+
+// 修改用户状态
+message UpdateUserStatusRequest{
+    string id = 1;
+    UserStatus status = 2;
+}
+
+// 修改密码
+message UpdateUserPasswordRequest {
+    string id = 1;
+    string password = 2; 
+}
+
+service UserService{
+    // 创建用户
+    rpc Create (User) returns (resp.IdReply);
+    // 更新用户
+    rpc Update(User) returns (resp.AffReply);
+    // 删除用户
+    rpc Delete(req.IdRequest) returns (resp.AffReply);
+    // 获取单个用户
+    rpc Get(GetUserRequest) returns (GetUserReply);
+    // 用户列表
+    rpc List(ListUserRequest) returns (ListUserReply);
+    // 用户是否存在
+    rpc Exists(UserExistsRequest) returns (UserExistsResponse);
+    // 修改用户状态
+    rpc UpdateStatus(UpdateUserStatusRequest) returns(resp.AffReply);
+    // 修改密码
+    rpc UpdatePassword(UpdateUserPasswordRequest) returns(resp.AffReply);
+}

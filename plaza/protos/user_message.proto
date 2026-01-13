@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "resp.proto";
+
+package user;
+
+enum UserStatus {
+    Pending = 0;
+    Actived = 1;
+    Freezed = 2;
+}
+
+message User {
+    string id = 1;
+    string email = 2;
+    string password = 3;
+    string nickname = 4;
+    UserStatus status = 5;
+    google.protobuf.Timestamp created_at = 6;
+}
