@@ -1,4 +1,5 @@
 mod err;
+pub mod pb;
 
 pub use err::Error;
 
