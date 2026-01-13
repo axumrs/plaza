@@ -1,5 +1,8 @@
 mod err;
 pub mod pb;
+pub mod types;
+pub mod user;
+pub mod utils;
 
 pub use err::Error;
 

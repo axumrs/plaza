@@ -7,5 +7,5 @@ message IdReply {
 }
 
 message AffReply {
-    int64 rows = 1;
+    uint64 rows = 1;
 }

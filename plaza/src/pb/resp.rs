@@ -6,6 +6,6 @@ pub struct IdReply {
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AffReply {
-    #[prost(int64, tag = "1")]
-    pub rows: i64,
+    #[prost(uint64, tag = "1")]
+    pub rows: u64,
 }

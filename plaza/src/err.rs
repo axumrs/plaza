@@ -1,5 +1,11 @@
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("数据库错误")]
+    DataBase(#[from] sqlx::Error),
+
+    #[error("密码哈希错误")]
+    Password(#[from] bcrypt::BcryptError),
+
     #[error(transparent)]
     Other(#[from] anyhow::Error),
 }
