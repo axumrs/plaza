@@ -9,6 +9,10 @@ repository = "https://github.com/axumrs/plaza"
 homepage = "https://axum.eu.org"
 description = "axum中文网专题《使用axum打造分布式商城》"
 
+[[bin]]
+name = "user-srv"
+path = "src/bin/user-srv.rs"
+
 [dependencies]
 anyhow = "1.0.100"
 axum = "0.8.8"
@@ -16,6 +20,7 @@ bcrypt = "0.18.0"
 chrono = { version = "0.4.42", features = ["serde"] }
 prost = "0.14.3"
 prost-types = "0.14.3"
+reqwest = { version = "0.13.1", features = ["form", "json"] }
 serde = { version = "1.0.228", features = ["derive"] }
 sqlx = { version = "0.8.6", features = [
     "runtime-tokio",
@@ -35,6 +40,8 @@ tonic = "0.14.2"
 tonic-prost = "0.14.2"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+validator = { version = "0.20.0", features = ["derive"] }
+xid = "1.1.1"
 
 [build-dependencies]
 anyhow = "1.0.100"

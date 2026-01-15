@@ -18,3 +18,7 @@ pub fn chrono2prost(ts: Timestamp) -> Option<prost_types::Timestamp> {
         nanos: 0,
     })
 }
+
+pub fn chrono_now_to_prost() -> Option<prost_types::Timestamp> {
+    chrono2prost(chrono::Utc::now())
+}

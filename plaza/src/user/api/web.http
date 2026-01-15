@@ -1,0 +1,46 @@
+@baseUrl = http://127.0.0.1:9527
+
+### 注册
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "email":"team@mail.axum.eu.org",
+    "nickname":"AXUM中文网",
+    "password":"axum.eu.org",
+    "active_code":"123456",
+    "captcha":"XXXX.DUMMY.TOKEN.XXXX"
+}
+
+# @name login
+### 登录
+POST {{baseUrl}}/auth HTTP/1.1
+Content-Type: application/json
+
+{
+    "email":"team@mail.axum.eu.org",
+    "password":"axum.eu.org",
+    "captcha":"XXXX.DUMMY.TOKEN.XXXX"
+}
+
+@authToken = {{login.response.body.$.token}}
+
+### 修改资料
+PUT {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "nickname":"AXUM中文网<UPDATED>"
+}
+
+### 修改密码
+PUT {{baseUrl}}/password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "password":"axum.eu.org",
+    "new_password":"org.eu.axum",
+    "re_password":"org.eu.axum"
+}

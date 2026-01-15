@@ -1,3 +1,5 @@
+pub mod api_resp;
+pub mod captcha;
 mod err;
 pub mod pb;
 pub mod types;
