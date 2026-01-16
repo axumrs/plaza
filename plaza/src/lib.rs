@@ -1,6 +1,7 @@
 pub mod api_resp;
 pub mod captcha;
 mod err;
+pub mod helper;
 pub mod jwt;
 pub mod mail;
 pub mod pb;

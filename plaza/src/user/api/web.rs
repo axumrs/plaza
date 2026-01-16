@@ -1,24 +1,9 @@
-use crate::{Error, Result, api_resp, pb, types, utils};
+use crate::{Error, Result, api_resp, helper, pb, types, utils};
 
 use super::{ArcApiState, payload};
 use axum::{Json, extract::State};
 use tonic::Request;
 use validator::Validate;
-
-pub async fn send_valid_code(
-    State(_state): State<ArcApiState>,
-    Json(pl): Json<payload::web::SendValidCodePayload>,
-) -> Result<api_resp::JsonResp<()>> {
-    pl.validate()?;
-
-    // TODO: 人机验证
-
-    // TODO: 生成、保存验证码
-
-    // TODO：发送验证码
-
-    Ok(api_resp::ok_empty().to_json())
-}
 
 pub async fn register(
     State(state): State<ArcApiState>,
@@ -27,6 +12,11 @@ pub async fn register(
     pl.validate()?;
 
     // TODO: 人机验证
+
+    // 验证激活码
+    if !helper::invoke_valid_code_verify(&pl.valid_code, &pl.email, 0).await? {
+        return Err(Error::Custom("激活码错误"));
+    }
 
     let pwd = utils::password::hash(&pl.password)?;
     let mut cli = state.cli.clone();
