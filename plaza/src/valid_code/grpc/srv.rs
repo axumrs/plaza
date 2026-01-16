@@ -2,21 +2,22 @@ use std::sync::Arc;
 
 use tonic::async_trait;
 
+use super::super::model;
 use crate::{
     pb::{
         self,
-        active_code::{ActiveCode, SendActiveCodeRequest, VerifyActiveCodeReply},
+        valid_code::{CreateValidCodeRequest, VerifyValidCodeReply},
     },
     rds,
 };
 
-pub struct ActiveCodeSrv {
+pub struct ValidCodeSrv {
     cli: Arc<rds::RdsCli>,
     key_prefix: String,
     expired_seconds: u64,
 }
 
-impl ActiveCodeSrv {
+impl ValidCodeSrv {
     pub fn new(cli: rds::RdsCli, key_prefix: impl Into<String>, expired_seconds: u64) -> Self {
         Self {
             cli: Arc::new(cli),
@@ -30,44 +31,49 @@ impl ActiveCodeSrv {
 }
 
 #[async_trait]
-impl pb::active_code::active_code_service_server::ActiveCodeService for ActiveCodeSrv {
-    async fn send(
+impl pb::valid_code::valid_code_service_server::ValidCodeService for ValidCodeSrv {
+    async fn create(
         &self,
-        request: tonic::Request<SendActiveCodeRequest>,
-    ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+        request: tonic::Request<CreateValidCodeRequest>,
+    ) -> std::result::Result<tonic::Response<pb::valid_code::ValidCode>, tonic::Status> {
         let req = request.into_inner();
         let key = self.gen_key(&req.email, req.kind);
         let code: u32 = rand::random_range(100000..=999999);
         let code = format!("{code}");
 
+        let m = model::ValidCode {
+            code,
+            kind: req.kind().into(),
+            email: req.email,
+        };
         self.cli
-            .set_ex(&key, &code, self.expired_seconds)
+            .set_ex(&key, &m, self.expired_seconds)
             .await
             .map_err(|e| {
                 tracing::error!("{e:?}");
                 tonic::Status::internal("Redis 错误")
             })?;
-        Ok(tonic::Response::new(()))
+        Ok(tonic::Response::new(m.into()))
     }
     async fn verify(
         &self,
-        request: tonic::Request<ActiveCode>,
-    ) -> std::result::Result<tonic::Response<VerifyActiveCodeReply>, tonic::Status> {
+        request: tonic::Request<pb::valid_code::ValidCode>,
+    ) -> std::result::Result<tonic::Response<VerifyValidCodeReply>, tonic::Status> {
         let req = request.into_inner();
         let key = self.gen_key(&req.email, req.kind);
 
-        let v = self.cli.get::<String>(&key).await.map_err(|e| {
+        let v = self.cli.get::<model::ValidCode>(&key).await.map_err(|e| {
             tracing::error!("{e:?}");
             tonic::Status::internal("Redis 错误")
         })?;
 
         if let Some(v) = v {
-            return Ok(tonic::Response::new(VerifyActiveCodeReply {
-                success: v == req.code,
+            return Ok(tonic::Response::new(VerifyValidCodeReply {
+                success: v.code == req.code,
             }));
         }
 
-        Ok(tonic::Response::new(VerifyActiveCodeReply {
+        Ok(tonic::Response::new(VerifyValidCodeReply {
             success: false,
         }))
     }

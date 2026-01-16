@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package active_code;
+package valid_code;
 
-enum ActiveCodeKind {
+enum ValidCodeKind {
     Register = 0;
     ResetPassword = 1;
 }
-message ActiveCode {
+message ValidCode {
     string code = 1;
-    ActiveCodeKind kind = 2;
+    ValidCodeKind kind = 2;
     string email = 3;
 }

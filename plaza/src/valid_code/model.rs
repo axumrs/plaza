@@ -1,14 +1,14 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub enum ActiveCodeKind {
+pub enum ValidCodeKind {
     Register,
     ResetPassword,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ActiveCode {
+pub struct ValidCode {
     pub code: String,
-    pub kind: ActiveCodeKind,
+    pub kind: ValidCodeKind,
     pub email: String,
 }

@@ -1,4 +1,3 @@
-pub mod active_code;
 pub mod api_resp;
 pub mod captcha;
 mod err;
@@ -8,6 +7,7 @@ pub mod rds;
 pub mod types;
 pub mod user;
 pub mod utils;
+pub mod valid_code;
 
 pub use err::Error;
 

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package valid_code;
+
+import "valid_code_messsage.proto";
+
+// 创建
+message CreateValidCodeRequest {
+    string email = 1;
+    ValidCodeKind kind = 2;
+}
+
+// 验证
+message VerifyValidCodeReply {
+    bool success = 1;
+}
+service ValidCodeService {
+    rpc Create(CreateValidCodeRequest) returns (ValidCode);
+    rpc Verify(ValidCode) returns (VerifyValidCodeReply);
+}
