@@ -15,6 +15,12 @@ pub enum Error {
     #[error("HTTP请求错误")]
     Reqwest(#[from] reqwest::Error),
 
+    #[error("Redis错误")]
+    Redis(#[from] redis::RedisError),
+
+    #[error("序列化错误")]
+    Serde(#[from] serde_json::Error),
+
     #[error("{0}")]
     Custom(&'static str),
 
