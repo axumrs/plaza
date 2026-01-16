@@ -1,3 +1,4 @@
+pub mod active_code;
 pub mod api_resp;
 pub mod captcha;
 mod err;

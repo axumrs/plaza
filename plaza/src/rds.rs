@@ -1,4 +1,4 @@
-use redis::AsyncTypedCommands;
+use redis::{AsyncTypedCommands, Client, cluster::ClusterClient};
 use serde::{Serialize, de::DeserializeOwned};
 
 use crate::Result;
@@ -34,6 +34,50 @@ pub async fn get<T: DeserializeOwned, C: AsyncTypedCommands>(
     };
 
     Ok(Some(serde_json::from_str::<T>(&value)?))
+}
+
+pub enum RdsCli {
+    Single(Client),
+    Cluster(ClusterClient),
+}
+
+impl RdsCli {
+    pub async fn set<T: Serialize>(&self, key: &str, value: &T) -> Result<()> {
+        match self {
+            Self::Single(cli) => {
+                let mut cli = cli.get_multiplexed_async_connection().await?;
+                set(&mut cli, key, value).await
+            }
+            Self::Cluster(cli) => {
+                let mut cli = cli.get_async_connection().await?;
+                set(&mut cli, key, value).await
+            }
+        }
+    }
+    pub async fn set_ex<T: Serialize>(&self, key: &str, value: &T, seconds: u64) -> Result<()> {
+        match self {
+            Self::Single(cli) => {
+                let mut cli = cli.get_multiplexed_async_connection().await?;
+                set_ex(&mut cli, key, value, seconds).await
+            }
+            Self::Cluster(cli) => {
+                let mut cli = cli.get_async_connection().await?;
+                set_ex(&mut cli, key, value, seconds).await
+            }
+        }
+    }
+    pub async fn get<T: DeserializeOwned>(&self, key: &str) -> Result<Option<T>> {
+        match self {
+            Self::Single(cli) => {
+                let mut cli = cli.get_multiplexed_async_connection().await?;
+                get(&mut cli, key).await
+            }
+            Self::Cluster(cli) => {
+                let mut cli = cli.get_async_connection().await?;
+                get(&mut cli, key).await
+            }
+        }
+    }
 }
 
 #[cfg(test)]
