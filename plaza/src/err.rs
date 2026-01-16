@@ -21,6 +21,9 @@ pub enum Error {
     #[error("序列化错误")]
     Serde(#[from] serde_json::Error),
 
+    #[error("JWT错误")]
+    Jwt(#[from] jsonwebtoken::errors::Error),
+
     #[error("{0}")]
     Custom(&'static str),
 
