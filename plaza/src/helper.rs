@@ -10,5 +10,7 @@ pub async fn invoke_valid_code_verify(
         email: email.into(),
         kind: kind.into(),
     };
-    unimplemented!()
+
+    // TODO: 调用API
+    return Ok(false);
 }
