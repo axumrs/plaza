@@ -24,6 +24,15 @@ pub enum Error {
     #[error("JWT错误")]
     Jwt(#[from] jsonwebtoken::errors::Error),
 
+    #[error("邮件错误")]
+    Email(#[from] lettre::error::Error),
+
+    #[error("邮件发送错误")]
+    EmailSend(#[from] lettre::transport::smtp::Error),
+
+    #[error("邮件地址错误")]
+    EmailAddress(#[from] lettre::address::AddressError),
+
     #[error("{0}")]
     Custom(&'static str),
 

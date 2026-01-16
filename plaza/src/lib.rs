@@ -2,6 +2,7 @@ pub mod api_resp;
 pub mod captcha;
 mod err;
 pub mod jwt;
+pub mod mail;
 pub mod pb;
 pub mod rds;
 pub mod types;
