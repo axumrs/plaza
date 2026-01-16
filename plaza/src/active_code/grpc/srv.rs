@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use redis::Client;
 use tonic::async_trait;
 
 use crate::{
@@ -14,13 +13,15 @@ use crate::{
 pub struct ActiveCodeSrv {
     cli: Arc<rds::RdsCli>,
     key_prefix: String,
+    expired_seconds: u64,
 }
 
 impl ActiveCodeSrv {
-    pub fn new(cli: rds::RdsCli, key_prefix: impl Into<String>) -> Self {
+    pub fn new(cli: rds::RdsCli, key_prefix: impl Into<String>, expired_seconds: u64) -> Self {
         Self {
             cli: Arc::new(cli),
             key_prefix: key_prefix.into(),
+            expired_seconds,
         }
     }
     fn gen_key(&self, email: &str, kind: i32) -> String {
@@ -38,10 +39,9 @@ impl pb::active_code::active_code_service_server::ActiveCodeService for ActiveCo
         let key = self.gen_key(&req.email, req.kind);
         let code: u32 = rand::random_range(100000..=999999);
         let code = format!("{code}");
-        let expire_seconds = 60 * 5;
 
         self.cli
-            .set_ex(&key, &code, expire_seconds)
+            .set_ex(&key, &code, self.expired_seconds)
             .await
             .map_err(|e| {
                 tracing::error!("{e:?}");

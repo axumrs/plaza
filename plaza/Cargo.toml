@@ -13,6 +13,10 @@ description = "axum中文网专题《使用axum打造分布式商城》"
 name = "user-srv"
 path = "src/bin/user-srv.rs"
 
+[[bin]]
+name = "active-code-srv"
+path = "src/bin/active-code-srv.rs"
+
 [dependencies]
 anyhow = "1.0.100"
 axum = "0.8.8"
