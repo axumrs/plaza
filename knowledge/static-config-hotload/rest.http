@@ -1,0 +1,14 @@
+### 读取配置
+GET http://127.0.0.1:9527
+
+### 修改配置
+PUT http://127.0.0.1:9527
+Content-Type: application/json
+
+{
+  "addr": "127.0.0.1:8080",
+  "database": {
+    "url": "postgres://postgres:postgres@localhost:5432/postgres?sslmode=enable",
+    "max_conns": 10
+  }
+}
