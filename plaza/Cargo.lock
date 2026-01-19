@@ -585,6 +585,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "etcd-client"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ed900ba953ca6bf1fadb75e0c6b73d8463b9e2bb6bdb7b4573e8e7295852fbe"
+dependencies = [
+ "http",
+ "prost",
+ "tokio",
+ "tokio-stream",
+ "tonic",
+ "tonic-build",
+ "tonic-prost",
+ "tonic-prost-build",
+ "tower",
+ "tower-service",
+]
+
+[[package]]
 name = "etcetera"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1807,6 +1825,7 @@ dependencies = [
  "axum",
  "bcrypt",
  "chrono",
+ "etcd-client",
  "jsonwebtoken",
  "lettre",
  "notify",

@@ -27,6 +27,7 @@ arc-swap = "1.8.0"
 axum = "0.8.8"
 bcrypt = "0.18.0"
 chrono = { version = "0.4.43", features = ["serde"] }
+etcd-client = "0.18.0"
 jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"] }
 lettre = { version = "0.11.19", features = ["tokio1-native-tls"] }
 notify = { version = "8.2.0", features = ["serde"] }

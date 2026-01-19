@@ -36,6 +36,9 @@ pub enum Error {
     #[error("IO错误")]
     Io(#[from] std::io::Error),
 
+    #[error("ETCD错误")]
+    Etcd(#[from] etcd_client::Error),
+
     #[error("{0}")]
     Custom(&'static str),
 

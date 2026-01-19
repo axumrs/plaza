@@ -33,6 +33,7 @@ impl Default for FileConfig {
 pub struct EtcdConfig {
     pub endpoints: Vec<String>,
     pub timeout_secs: u8,
+    pub key_prefix: String,
 }
 
 impl Default for EtcdConfig {
@@ -40,6 +41,7 @@ impl Default for EtcdConfig {
         Self {
             endpoints: vec!["http://127.0.0.1:2379".to_string()],
             timeout_secs: 10,
+            key_prefix: "axum-eu-org/plaza".into(),
         }
     }
 }
