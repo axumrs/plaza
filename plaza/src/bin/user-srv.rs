@@ -1,4 +1,4 @@
-use plaza::{config, pb, user, utils};
+use plaza::{config, interceptors, pb, user, utils};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -16,8 +16,13 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("User gRPC Server Listening on {}", addr);
 
     let srv = user::grpc::srv::UserSrv::new(pool);
+    let srv = pb::user::user_service_server::UserServiceServer::with_interceptor(
+        srv,
+        interceptors::user_auth::server_interceptors,
+    );
+
     tonic::transport::Server::builder()
-        .add_service(pb::user::user_service_server::UserServiceServer::new(srv))
+        .add_service(srv)
         .serve(addr)
         .await?;
 
