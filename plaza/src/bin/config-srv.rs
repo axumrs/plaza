@@ -18,7 +18,10 @@ async fn main() -> anyhow::Result<()> {
             mails: vec![],
             user_service: config::ServiceConfig {
                 name: "user".into(),
-                db: Some(config::DatabaseConfig::default()),
+                db: Some(config::DatabaseConfig {
+                    dsn: "postgres://plaza:plaza@localhost:5432/plaza".into(),
+                    max_conns: 5,
+                }),
                 rds: Some(config::RedisConfig::default()),
                 jwt: Some(config::JwtConfig {
                     sub: "AXUM.EU.ORG/PLAZA/USER".into(),
@@ -28,13 +31,17 @@ async fn main() -> anyhow::Result<()> {
                 srv_addr: Some("127.0.0.1:40000".into()),
                 api_prefix: Some("/user".into()),
             },
-            auth_service: config::ServiceConfig {
-                name: "auth".into(),
+            valid_code_service: config::ServiceConfig {
+                name: "valid_code".into(),
                 db: None,
-                rds: Some(config::RedisConfig::default()),
+                rds: Some(config::RedisConfig {
+                    url: "redis://127.0.0.1:6379/0".to_string(),
+                    prefix: "plaza:valid_code".to_string(),
+                    timeout: 300,
+                }),
                 jwt: None,
                 srv_addr: Some("127.0.0.1:40001".into()),
-                api_prefix: Some("/auth".into()),
+                api_prefix: Some("/valid_code".into()),
             },
             ..Default::default()
         };

@@ -1,79 +1,64 @@
-use crate::{Error, Result, api_resp, helper, pb, types, utils};
+use crate::{Error, Result, api_resp, mw, pb, user::grpc::cli, utils};
 
 use super::{ArcApiState, payload};
 use axum::{Json, extract::State};
 use tonic::Request;
 use validator::Validate;
 
-pub async fn register(
+pub async fn update_nickname(
     State(state): State<ArcApiState>,
-    Json(pl): Json<payload::web::RegisterPayload>,
-) -> Result<api_resp::JsonResp<api_resp::Id>> {
-    pl.validate()?;
-
-    // TODO: 人机验证
-
-    // 验证激活码
-    if !helper::invoke_valid_code_verify(&pl.valid_code, &pl.email, 0).await? {
-        return Err(Error::Custom("激活码错误"));
-    }
-
-    let pwd = utils::password::hash(&pl.password)?;
-    let mut cli = state.cli.clone();
-    let r = cli
-        .create(Request::new(pb::user::User {
-            id: utils::id::new(),
-            email: pl.email,
-            password: pwd,
-            nickname: pl.nickname,
-            status: pb::user::UserStatus::Actived as i32,
-            created_at: types::chrono_now_to_prost(),
-        }))
-        .await?;
-
-    Ok(api_resp::ok(api_resp::Id {
-        id: r.into_inner().id,
-    })
-    .to_json())
-}
-
-pub async fn login(
-    State(state): State<ArcApiState>,
-    Json(pl): Json<payload::web::LoginPayload>,
-) -> Result<api_resp::JsonResp<String>> {
-    pl.validate()?;
-
-    // TODO: 人机验证
-
-    let mut cli = state.cli.clone();
-    let user_resp = cli
-        .get(Request::new(pb::user::GetUserRequest {
-            status: Some(pb::user::UserStatus::Actived as i32),
-            by: Some(pb::user::get_user_request::By::Email(pl.email.clone())),
-        }))
-        .await?;
-
-    let user = match user_resp.into_inner().user {
-        Some(v) => v,
-        None => return Err(Error::Custom("用户不存在")),
-    };
-
-    if !utils::password::verify(&pl.password, &user.password)? {
-        return Err(Error::Custom("账号/密码错误"));
-    }
-
-    let token = String::new(); // TODO： JWT
-
-    Ok(api_resp::ok(token).to_json())
-}
-
-pub async fn update_profile(
-    State(_state): State<ArcApiState>,
+    mw::UserAuth { user, token }: mw::UserAuth,
     Json(pl): Json<payload::web::UpdateProfilePayload>,
 ) -> Result<api_resp::JsonResp<api_resp::Aff>> {
     pl.validate()?;
 
-    // TODO: 中间件
+    let mut cli = cli::connect(&token, &state.rtc.user_service).await?;
 
-    unimplemented!()
+    let r = cli
+        .update_nickname(Request::new(pb::user::UpdateUserNicknameRequest {
+            id: user.id,
+            nickname: pl.nickname,
+        }))
+        .await?
+        .into_inner();
+
+    Ok(api_resp::ok(api_resp::Aff { rows: r.rows }).to_json())
+}
+
+pub async fn update_password(
+    State(state): State<ArcApiState>,
+    mw::UserAuth { user, token }: mw::UserAuth,
+    Json(pl): Json<payload::web::UpdatePasswordPayload>,
+) -> Result<api_resp::JsonResp<api_resp::Aff>> {
+    pl.validate()?;
+
+    let mut cli = cli::connect(&token, &state.rtc.user_service).await?;
+
+    let got_user = cli
+        .get(Request::new(pb::user::GetUserRequest {
+            status: Some(pb::user::UserStatus::Actived as i32),
+            by: Some(pb::user::get_user_request::By::Id(user.id.clone())),
+        }))
+        .await?
+        .into_inner();
+    let got_user = match got_user.user {
+        Some(v) => v,
+        None => return Err(Error::Custom("用户不存在")),
+    };
+
+    if !utils::password::verify(&pl.password, &got_user.password)? {
+        return Err(Error::Custom("密码错误"));
+    }
+
+    let pwd = utils::password::hash(&pl.new_password)?;
+
+    let r = cli
+        .update_password(Request::new(pb::user::UpdateUserPasswordRequest {
+            id: user.id,
+            password: pwd,
+        }))
+        .await?
+        .into_inner();
+
+    Ok(api_resp::ok(api_resp::Aff { rows: r.rows }).to_json())
 }

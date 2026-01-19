@@ -51,11 +51,17 @@ message UpdateUserPasswordRequest {
     string password = 2; 
 }
 
+// 修改昵称
+message UpdateUserNicknameRequest {
+    string id = 1;
+    string nickname = 2;
+}
+
 service UserService{
     // 创建用户
     rpc Create (User) returns (resp.IdReply);
     // 更新用户
-    rpc Update(User) returns (resp.AffReply);
+    rpc UpdateNickname(UpdateUserNicknameRequest) returns (resp.AffReply);
     // 删除用户
     rpc Delete(req.IdRequest) returns (resp.AffReply);
     // 获取单个用户

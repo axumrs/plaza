@@ -1,4 +1,6 @@
-use crate::{Result, api_resp, mail, pb};
+use std::sync::Arc;
+
+use crate::{Error, Result, api_resp, captcha, config, mail, pb};
 
 use super::model;
 use super::{ArcActiveCodeState, payload};
@@ -13,7 +15,11 @@ pub async fn send(
 ) -> Result<api_resp::JsonResp<()>> {
     payload.validate()?;
 
-    // TODO: 人机验证
+    let turnstile =
+        &captcha::Turnstile::new(&state.fc.turnstile.secret, state.fc.turnstile.timeout_secs);
+    if !captcha::verify(turnstile, &payload.captcha).await?.success {
+        return Err(Error::Custom("人机验证失败"));
+    }
 
     // grpc
     let mut cli = state.cli.clone();
@@ -28,7 +34,7 @@ pub async fn send(
         .into_inner();
 
     // 发送邮件
-    tokio::spawn(send_email(res.into()));
+    tokio::spawn(send_email(res.into(), state.rtc.clone()));
 
     Ok(api_resp::ok_empty().to_json())
 }
@@ -44,7 +50,11 @@ pub async fn verify(
 ) -> Result<api_resp::JsonResp<VerifyValidCodeResp>> {
     payload.validate()?;
 
-    // TODO: 人机验证
+    let turnstile =
+        &captcha::Turnstile::new(&state.fc.turnstile.secret, state.fc.turnstile.timeout_secs);
+    if !captcha::verify(turnstile, &payload.captcha).await?.success {
+        return Err(Error::Custom("人机验证失败"));
+    }
 
     let mut cli = state.cli.clone();
     let kind: pb::valid_code::ValidCodeKind = payload.kind.into();
@@ -64,11 +74,18 @@ pub async fn verify(
     .to_json())
 }
 
-async fn send_email(m: model::ValidCode) {
+async fn send_email(m: model::ValidCode, rtc: Arc<config::RuntimeConfig>) {
+    let mc = match rtc.mail() {
+        Some(v) => v,
+        None => {
+            tracing::error!("邮件配置不存在");
+            return;
+        }
+    };
     let body = format!("你的激活码是：{}", m.code);
     let data = mail::Data::new("激活码", body, &m.email);
 
-    let res = match mail::send(m.email, m.code, "127.0.0.1:40001", data).await {
+    let res = match mail::send(&mc.user, &mc.password, &mc.smtp, data).await {
         Ok(res) => res,
         Err(e) => {
             tracing::error!("{e:?}");

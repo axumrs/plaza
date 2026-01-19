@@ -1,0 +1,19 @@
+syntax = "proto3";
+package user_auth;
+
+import "user_message.proto";
+import "resp.proto";
+
+message UserAuthLoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message UserAuthLoginReply {
+   optional user.User user = 1;
+}
+
+service UserAuthService {
+     rpc Register (user.User) returns (resp.IdReply);
+     rpc Login (UserAuthLoginRequest) returns (UserAuthLoginReply);
+}

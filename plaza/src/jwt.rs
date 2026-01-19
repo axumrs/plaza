@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::Result;
 
+pub const ISSUER: &str = "AXUM.EU.ORG";
+
 /// 用户信息
 #[derive(Serialize, Deserialize)]
 pub struct UserClaimsData {
@@ -30,7 +32,7 @@ impl Claims {
     pub fn new(sub: impl Into<String>, exp: i64, iat: i64, data: ClaimsData) -> Self {
         Self {
             sub: sub.into(),
-            iss: "AXUM.EU.ORG".into(),
+            iss: ISSUER.into(),
             exp,
             iat,
             data,

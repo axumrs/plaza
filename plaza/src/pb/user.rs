@@ -116,6 +116,14 @@ pub struct UpdateUserPasswordRequest {
     #[prost(string, tag = "2")]
     pub password: ::prost::alloc::string::String,
 }
+/// 修改昵称
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateUserNicknameRequest {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub nickname: ::prost::alloc::string::String,
+}
 /// Generated client implementations.
 pub mod user_service_client {
     #![allow(
@@ -230,9 +238,9 @@ pub mod user_service_client {
             self.inner.unary(req, path, codec).await
         }
         /// 更新用户
-        pub async fn update(
+        pub async fn update_nickname(
             &mut self,
-            request: impl tonic::IntoRequest<super::User>,
+            request: impl tonic::IntoRequest<super::UpdateUserNicknameRequest>,
         ) -> std::result::Result<
             tonic::Response<super::super::resp::AffReply>,
             tonic::Status,
@@ -246,9 +254,12 @@ pub mod user_service_client {
                     )
                 })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/user.UserService/Update");
+            let path = http::uri::PathAndQuery::from_static(
+                "/user.UserService/UpdateNickname",
+            );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("user.UserService", "Update"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("user.UserService", "UpdateNickname"));
             self.inner.unary(req, path, codec).await
         }
         /// 删除用户
@@ -407,9 +418,9 @@ pub mod user_service_server {
             tonic::Status,
         >;
         /// 更新用户
-        async fn update(
+        async fn update_nickname(
             &self,
-            request: tonic::Request<super::User>,
+            request: tonic::Request<super::UpdateUserNicknameRequest>,
         ) -> std::result::Result<
             tonic::Response<super::super::resp::AffReply>,
             tonic::Status,
@@ -576,11 +587,13 @@ pub mod user_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/user.UserService/Update" => {
+                "/user.UserService/UpdateNickname" => {
                     #[allow(non_camel_case_types)]
-                    struct UpdateSvc<T: UserService>(pub Arc<T>);
-                    impl<T: UserService> tonic::server::UnaryService<super::User>
-                    for UpdateSvc<T> {
+                    struct UpdateNicknameSvc<T: UserService>(pub Arc<T>);
+                    impl<
+                        T: UserService,
+                    > tonic::server::UnaryService<super::UpdateUserNicknameRequest>
+                    for UpdateNicknameSvc<T> {
                         type Response = super::super::resp::AffReply;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
@@ -588,11 +601,11 @@ pub mod user_service_server {
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::User>,
+                            request: tonic::Request<super::UpdateUserNicknameRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as UserService>::update(&inner, request).await
+                                <T as UserService>::update_nickname(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -603,7 +616,7 @@ pub mod user_service_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = UpdateSvc(inner);
+                        let method = UpdateNicknameSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

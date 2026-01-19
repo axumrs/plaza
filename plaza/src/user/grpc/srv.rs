@@ -5,8 +5,9 @@ use crate::{
         self, req, resp,
         user::{
             GetUserReply, GetUserRequest, ListUserReply, ListUserRequest,
-            UpdateUserPasswordRequest, UpdateUserStatusRequest, User, UserExistsRequest,
-            UserExistsResponse, UserStatus, get_user_request, user_service_server::UserService,
+            UpdateUserNicknameRequest, UpdateUserPasswordRequest, UpdateUserStatusRequest, User,
+            UserExistsRequest, UserExistsResponse, UserStatus, get_user_request,
+            user_service_server::UserService,
         },
     },
     types,
@@ -59,44 +60,23 @@ impl UserService for UserSrv {
 
         Ok(tonic::Response::new(resp::IdReply { id }))
     }
-    /// 更新用户
-    async fn update(
+    /// 更新用户昵称
+    async fn update_nickname(
         &self,
-        request: tonic::Request<User>,
+        request: tonic::Request<UpdateUserNicknameRequest>,
     ) -> std::result::Result<tonic::Response<resp::AffReply>, tonic::Status> {
-        let user = model::User::from(request.into_inner());
-        if user.id.is_empty() {
-            return Err(tonic::Status::invalid_argument("id不能为空"));
-        }
+        let req = request.into_inner();
 
-        let is_exists_resp = self
-            .exists(tonic::Request::new(UserExistsRequest {
-                email: user.email.clone(),
-                id: Some(user.id.clone()),
-            }))
-            .await?;
-
-        if is_exists_resp.into_inner().is_exists {
-            return Err(tonic::Status::already_exists("用户已存在"));
-        }
-
-        let pwd = utils::password::hash(&user.password).map_err(|e| {
-            tracing::error!("{e:?}");
-            tonic::Status::internal("密码加密失败")
-        })?;
-
-        let rows = sqlx::query(r#"UPDATE "users" SET "email" = $1, "password" = $2, "nickname" = $3, "status" = $4 WHERE "id" = $5"#)
-        .bind(&user.email)
-        .bind(&pwd)
-        .bind(&user.nickname)
-        .bind(&user.status)
-        .bind(&user.id)
-        .execute(&self.pool)
-        .await
-        .map_err(|e| {
-            tracing::error!("{e:?}");
-            tonic::Status::internal("数据库错误")
-        })?.rows_affected();
+        let rows = sqlx::query(r#"UPDATE "users" SET "nickname"=$1 WHERE "id"=$2"#)
+            .bind(&req.nickname)
+            .bind(&req.id)
+            .execute(&self.pool)
+            .await
+            .map_err(|e| {
+                tracing::error!("{e:?}");
+                tonic::Status::internal("数据库错误")
+            })?
+            .rows_affected();
 
         Ok(tonic::Response::new(resp::AffReply { rows }))
     }

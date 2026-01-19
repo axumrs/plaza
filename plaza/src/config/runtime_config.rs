@@ -10,7 +10,20 @@ static RUNTIME_CONFIG: LazyLock<ArcSwap<RuntimeConfig>> =
 pub struct RuntimeConfig {
     pub mails: Vec<MailConfig>,
     pub user_service: ServiceConfig,
-    pub auth_service: ServiceConfig,
+    pub valid_code_service: ServiceConfig,
+    pub user_auth_service: ServiceConfig,
+}
+
+impl RuntimeConfig {
+    pub fn mail(&self) -> Option<&MailConfig> {
+        let len = self.mails.len();
+        if len < 1 {
+            return None;
+        }
+
+        let idx = rand::random_range(0..len);
+        self.mails.get(idx)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
@@ -60,7 +73,7 @@ pub struct DatabaseConfig {
 impl Default for DatabaseConfig {
     fn default() -> Self {
         Self {
-            dsn: "postgres://plaze:plaze@127.0.0.1:5432/plaze".to_string(),
+            dsn: "postgres://plaza:plaza@127.0.0.1:5432/plaza".to_string(),
             max_conns: 5,
         }
     }
@@ -68,16 +81,20 @@ impl Default for DatabaseConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RedisConfig {
     pub url: String,
+    pub prefix: String,
+    pub timeout: u32,
 }
 impl Default for RedisConfig {
     fn default() -> Self {
         Self {
             url: "redis://127.0.0.1:6379/0".to_string(),
+            prefix: String::default(),
+            timeout: 10,
         }
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct JwtConfig {
     pub sub: String,
     pub secret_key: String,

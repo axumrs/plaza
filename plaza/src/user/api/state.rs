@@ -1,15 +1,25 @@
 use std::sync::Arc;
 
-use crate::pb;
+use crate::{Result, config, pb};
 
 pub struct ApiState {
-    pub cli: pb::user::user_service_client::UserServiceClient<tonic::transport::Channel>,
+    pub fc: Arc<config::FileConfig>,
+    pub rtc: Arc<config::RuntimeConfig>,
+    pub vc_cli: pb::valid_code::valid_code_service_client::ValidCodeServiceClient<
+        tonic::transport::Channel,
+    >,
 }
 
 pub type ArcApiState = Arc<ApiState>;
 
-pub fn arc(
-    cli: pb::user::user_service_client::UserServiceClient<tonic::transport::Channel>,
-) -> Arc<ApiState> {
-    Arc::new(ApiState { cli })
+impl ApiState {
+    pub async fn arc(
+        vc_cli: pb::valid_code::valid_code_service_client::ValidCodeServiceClient<
+            tonic::transport::Channel,
+        >,
+    ) -> Result<ArcApiState> {
+        let (fc, rtc) = config::load_config().await?;
+
+        Ok(Arc::new(Self { vc_cli, fc, rtc }))
+    }
 }

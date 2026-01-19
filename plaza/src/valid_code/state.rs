@@ -1,20 +1,23 @@
 use std::sync::Arc;
 
-use crate::pb;
+use crate::{config, pb};
 
 pub struct ValidCodeState {
     pub cli: pb::valid_code::valid_code_service_client::ValidCodeServiceClient<
         tonic::transport::Channel,
     >,
+    pub fc: Arc<config::FileConfig>,
+    pub rtc: Arc<config::RuntimeConfig>,
 }
 
 impl ValidCodeState {
-    pub fn arc(
+    pub async fn arc(
         cli: pb::valid_code::valid_code_service_client::ValidCodeServiceClient<
             tonic::transport::Channel,
         >,
     ) -> Arc<ValidCodeState> {
-        Arc::new(ValidCodeState { cli })
+        let (fc, rtc) = config::load_config().await.unwrap();
+        Arc::new(ValidCodeState { cli, fc, rtc })
     }
 }
 
