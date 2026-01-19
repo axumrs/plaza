@@ -33,6 +33,9 @@ pub enum Error {
     #[error("邮件地址错误")]
     EmailAddress(#[from] lettre::address::AddressError),
 
+    #[error("IO错误")]
+    Io(#[from] std::io::Error),
+
     #[error("{0}")]
     Custom(&'static str),
 
