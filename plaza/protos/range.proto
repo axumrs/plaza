@@ -8,3 +8,8 @@ message DateRange {
   google.protobuf.Timestamp start = 1;
   google.protobuf.Timestamp end = 2;
 }
+
+message BigIntRange {
+  int64 start = 1;
+  int64 end = 2;
+}

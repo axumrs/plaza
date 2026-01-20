@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package category;
+
+import "category_message.proto";
+import "resp.proto";
+import "req.proto";
+import "range.proto";
+import "paginate.proto";
+
+// 查找单条
+message GetCategoryRequest {
+    string id = 1;
+    optional string name = 2;
+    optional string parent = 3;
+    optional string path = 4;
+}
+message GetCategoryReply {
+    optional Category category = 1;
+}
+
+// 分页
+message ListCategoryRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string name = 2;
+    optional string parent = 3;
+    optional string path = 4;
+    optional CategoryLevel level = 5;
+    optional range.BigIntRange security_deposits = 6;
+}
+message ListCategoryReply{
+    paginate.Paginate paginate = 1;
+    repeated Category categories = 2;
+}
+
+// 全部
+message ListAllCategoryRequest{
+    optional int32 limit = 1;
+    optional string name = 2;
+    optional string parent = 3;
+    optional string path = 4;
+    optional CategoryLevel level = 5;
+    optional range.BigIntRange security_deposits = 6;
+}
+message ListAllCategoryReply{
+    repeated Category categories = 1;
+}
+
+// 更新保证金
+message UpdateSecurityDepositRequest {
+    string id = 1;
+    int64 security_deposit = 2;
+}
+
+service CategoryService {
+    // 创建
+    rpc Create(Category) returns (resp.IdReply);
+    // 更新
+    rpc Update(Category) returns (resp.AffReply);
+    // 删除
+    rpc Delete(req.IdRequest) returns (resp.AffReply);
+    // 查找单条
+    rpc Get(GetCategoryRequest) returns (GetCategoryReply);
+    // 分页
+    rpc List(ListCategoryRequest) returns (ListCategoryReply);
+    // 全部
+    rpc ListAll(ListAllCategoryRequest) returns (ListAllCategoryReply);
+    // 更新保证金
+    rpc UpdateSecurityDeposit(UpdateSecurityDepositRequest) returns(resp.AffReply);
+}

@@ -6,3 +6,10 @@ pub struct DateRange {
     #[prost(message, optional, tag = "2")]
     pub end: ::core::option::Option<::prost_types::Timestamp>,
 }
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct BigIntRange {
+    #[prost(int64, tag = "1")]
+    pub start: i64,
+    #[prost(int64, tag = "2")]
+    pub end: i64,
+}

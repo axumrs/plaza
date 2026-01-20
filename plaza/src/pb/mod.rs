@@ -1,3 +1,4 @@
+pub mod category;
 pub mod paginate;
 pub mod range;
 pub mod req;

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package category;
+
+import "google/protobuf/timestamp.proto";
+
+enum CategoryLevel {
+    Unspecified = 0;
+    Level1 = 1;
+    Level2 = 2;
+    Level3 = 3;
+}
+
+
+message Category {
+    string id = 1;
+    string name = 2;
+    string parent = 3;
+    string path = 4;
+    CategoryLevel level = 5;
+    google.protobuf.Timestamp created_at = 6;
+    int64 security_deposit = 7;
+}
