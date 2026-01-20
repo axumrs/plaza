@@ -80,6 +80,8 @@ pub struct ListCategoryRequest {
     pub level: ::core::option::Option<i32>,
     #[prost(message, optional, tag = "6")]
     pub security_deposits: ::core::option::Option<super::range::BigIntRange>,
+    #[prost(string, optional, tag = "7")]
+    pub order: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListCategoryReply {
@@ -103,6 +105,8 @@ pub struct ListAllCategoryRequest {
     pub level: ::core::option::Option<i32>,
     #[prost(message, optional, tag = "6")]
     pub security_deposits: ::core::option::Option<super::range::BigIntRange>,
+    #[prost(string, optional, tag = "7")]
+    pub order: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ListAllCategoryReply {
