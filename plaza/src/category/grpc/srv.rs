@@ -5,8 +5,8 @@ use crate::{
     pb::{
         self,
         category::{
-            Category, GetCategoryReply, GetCategoryRequest, ListAllCategoryReply,
-            ListAllCategoryRequest, ListCategoryReply, ListCategoryRequest,
+            Category, GetCategoryReply, GetCategoryRequest, GetChildrenReply, GetChildrenRequest,
+            ListAllCategoryReply, ListAllCategoryRequest, ListCategoryReply, ListCategoryRequest,
             UpdateSecurityDepositRequest,
         },
         req, resp,
@@ -28,12 +28,11 @@ impl pb::category::category_service_server::CategoryService for CategorySrv {
         let r = request.into_inner();
         let m = model::Category::from(r);
         let id = query_scalar(
-            r#"INSERT INTO "categories" ("id","name", "parent", "path", "level", "security_deposit","created_at") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id""#,
+            r#"INSERT INTO "categories" ("id", "name", parent, "path", "level", "security_deposit", "created_at")
+	SELECT $1, $2, $3, (SELECT COALESCE  ((SELECT "path" FROM "categories"  WHERE "id"=$3) , '//')) || $1 || '/', (SELECT CASE COALESCE ((SELECT "level" FROM "categories" where id=$3), 'Unspecified'::category_level) WHEN 'Level1'::category_level THEN 'Level2'::category_level WHEN 'Level2'::category_level THEN 'Level3'::category_level ELSE 'Level1'::category_level END),$4,$5 RETURNING "id""#,
         ).bind(&m.id)
             .bind(&m.name)
             .bind(&m.parent)
-            .bind(&m.path)
-            .bind(&m.level)
             .bind(&m.security_deposit)
             .bind(&m.created_at)
             .fetch_one(&self.pool)
@@ -50,13 +49,17 @@ impl pb::category::category_service_server::CategoryService for CategorySrv {
     ) -> std::result::Result<tonic::Response<resp::AffReply>, tonic::Status> {
         let r = request.into_inner();
         let m = model::Category::from(r);
-        let rows = query(r#"UPDATE "categories" SET "name" = $1, "parent" = $2, "path" = $3, "level" = $4, "security_deposit" = $5  WHERE "id" = $6"#)
+        let rows = query(r#"UPDATE "categories" SET
+	"name" = (SELECT COALESCE ((SELECT LEFT( $1 || '#' || name, 100 )  FROM "categories" WHERE name = $2 and id<>$1), $2)),
+	"parent" = $3,
+	"path" = (SELECT COALESCE  ((SELECT "path" FROM categories  WHERE id=$3) , '//')) || $1 || '/',
+	"level" = (SELECT CASE COALESCE ((SELECT "level" FROM categories where id=$3), 'Unspecified'::category_level) WHEN 'Level1'::category_level THEN 'Level2'::category_level WHEN 'Level2'::category_level THEN 'Level3'::category_level ELSE 'Level1'::category_level END),
+	"security_deposit" = $4
+WHERE id = $1"#)
+.bind(&m.id)
             .bind(&m.name)
             .bind(&m.parent)
-            .bind(&m.path)
-            .bind(&m.level)
             .bind(&m.security_deposit)
-            .bind(&m.id)
             .execute(&self.pool)
             .await.map_err(|e|{
                 tracing::error!("{:?}", e);
@@ -298,5 +301,43 @@ impl pb::category::category_service_server::CategoryService for CategorySrv {
             })?
             .rows_affected();
         Ok(tonic::Response::new(resp::AffReply { rows }))
+    }
+    /// 子分类（树）
+    async fn get_children(
+        &self,
+        request: tonic::Request<GetChildrenRequest>,
+    ) -> std::result::Result<tonic::Response<GetChildrenReply>, tonic::Status> {
+        let r = request.into_inner();
+        let mut q = QueryBuilder::new(
+            r#"SELECT "id", "name", "parent", "path", "level", "security_deposit", "created_at" FROM "categories" WHERE "#,
+        );
+
+        if r.is_direct {
+            q.push(r#" "parent" ="#).push_bind(&r.id);
+        } else {
+            q.push(r#" "path" LIKE (SELECT "path" FROM "categories" WHERE "id" ="#)
+                .push_bind(&r.id)
+                .push(r#") || '%' AND "id" <> "#)
+                .push_bind(&r.id);
+        }
+        q.push(" ORDER BY id ASC");
+
+        let categories_list: Vec<model::Category> = q
+            .build_query_as()
+            .fetch_all(&self.pool)
+            .await
+            .map_err(|e| {
+                tracing::error!("{:?}", e);
+                tonic::Status::internal(e.to_string())
+            })?;
+
+        let categories_list = categories_list
+            .into_iter()
+            .map(|v| v.into())
+            .collect::<Vec<_>>();
+
+        Ok(tonic::Response::new(GetChildrenReply {
+            categories: categories_list,
+        }))
     }
 }

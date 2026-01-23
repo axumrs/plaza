@@ -54,6 +54,16 @@ message UpdateSecurityDepositRequest {
     int64 security_deposit = 2;
 }
 
+// 子类
+message GetChildrenRequest {
+    string id = 1;
+    // 是否直接子类
+    bool is_direct = 2;
+}
+message GetChildrenReply {
+    repeated Category categories = 1;
+}
+
 service CategoryService {
     // 创建
     rpc Create(Category) returns (resp.IdReply);
@@ -69,4 +79,7 @@ service CategoryService {
     rpc ListAll(ListAllCategoryRequest) returns (ListAllCategoryReply);
     // 更新保证金
     rpc UpdateSecurityDeposit(UpdateSecurityDepositRequest) returns(resp.AffReply);
+    // 子分类（树）
+    rpc GetChildren(GetChildrenRequest) returns(GetChildrenReply);
+    
 }
