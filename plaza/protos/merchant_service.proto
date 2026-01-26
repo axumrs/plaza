@@ -3,3 +3,145 @@ syntax = "proto3";
 package merchant;
 
 import "merchant_message.proto";
+import "resp.proto";
+import "req.proto";
+import "paginate.proto";
+import "audit.proto";
+
+// 创建
+message CreateMerchantRequest {
+    Merchant merchant = 1;
+    repeated MerchantAccount accounts = 2;
+}
+
+// 审核
+message AuditMerchantRequest {
+    // 关联的商家 ID
+  string merchant_id = 1;
+
+  // 审核员的 ID (通常对应后台管理员账号 ID)
+  string auditor_id = 2;
+
+  // 商家审核状态
+  audit.AuditStatus audit_status = 3;
+
+  // 审核的备注或意见 (例如拒绝原因)
+  string audit_comments = 4;
+}
+
+// 修改商户
+message UpdateMerchantRequest {
+    string id = 1;
+    string name = 2;
+    string short_name = 3;
+    MerchantKind kind = 4;
+    MerchantMeta meta = 5;
+}
+
+// 获取单个商户
+message GetMerchantRequest {
+    string id = 1;
+    optional audit.AuditStatus status = 2;
+}
+message GetMerchantReply {
+    optional Merchant merchant = 1;
+}
+
+// 商户列表
+message ListMerchantsRequest {
+    paginate.PaginateRequest pr = 1;
+    optional string name = 2;
+    optional string short_name = 3;
+    optional audit.AuditStatus status = 4;
+    optional MerchantKind kind = 5;
+}
+message ListMerchantsReply {
+    paginate.Paginate paginate = 1;
+    repeated Merchant merchant = 2;
+}
+
+
+// 添加账号
+message MerchantAddAccountsRequest {
+    string merchant_id = 1;
+    repeated MerchantAccount accounts = 2;
+}
+message MerchantAddAccountsReply {
+    repeated string ids = 1;
+}
+
+// 删除账号
+message MerchantRemoveAccountsRequest {
+    string merchant_id = 1;
+    repeated string ids = 2;
+}
+
+// 修改账号密码
+message MerchantUpdateAccountPasswordRequest {
+    string merchant_id = 1;
+    string id = 2;
+    string password = 3;
+}
+
+// 修改账号
+message UpdateAccountRequest {
+    string merchant_id = 1;
+    string id = 2;
+    bool is_super = 3;
+    int64 permission = 4;
+    string nickname = 5;
+}
+
+// 单个账号
+message MerchantGetAccountRequest {
+    string merchant_id = 1;
+    string id = 2;
+}
+message MerchantGetAccountReply {
+    optional MerchantAccount account = 1;
+}
+
+// 账号列表
+message MerchantListAccountsRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string merchant_id = 2;
+    optional string email = 3;
+    optional string nickname = 4;
+    optional bool is_super = 5;
+    optional int64 permission = 6;
+
+}
+message MerchantListAccountsReply{
+    paginate.Paginate paginate = 1;
+    repeated MerchantAccount accounts = 2;
+}
+
+
+service MerchantService {
+    // 创建
+    rpc Create(CreateMerchantRequest) returns (resp.IdReply);
+    // 删除
+    rpc Delete(req.IdRequest) returns(resp.AffReply);
+    // 审核
+    rpc Audit(AuditMerchantRequest) returns(resp.AffReply);
+    // 修改商户
+    rpc UpdateName(UpdateMerchantRequest) returns(resp.AffReply);
+    // 获取单个商户
+    rpc Get(GetMerchantRequest) returns(GetMerchantReply);
+    // 商户列表
+    rpc List(ListMerchantsRequest) returns(ListMerchantsReply);
+
+    // 添加账号
+    rpc AddAccounts(MerchantAddAccountsRequest) returns(MerchantAddAccountsReply);
+    // 删除账号
+    rpc RemoveAccounts(MerchantRemoveAccountsRequest) returns(resp.AffReply);
+    // 修改账号密码
+    rpc UpdateAccountPassword(MerchantUpdateAccountPasswordRequest) returns(resp.AffReply);
+    // 修改账号
+    rpc UpdateAccount(UpdateAccountRequest) returns(resp.AffReply);
+    // 获取单个账号
+    rpc GetAccount(MerchantGetAccountRequest) returns(MerchantGetAccountReply);
+    // 账号列表
+    rpc ListAccounts(MerchantListAccountsRequest) returns(MerchantListAccountsReply);
+    
+}

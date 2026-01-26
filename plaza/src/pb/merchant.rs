@@ -206,3 +206,1326 @@ impl MerchantKind {
         }
     }
 }
+/// 创建
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateMerchantRequest {
+    #[prost(message, optional, tag = "1")]
+    pub merchant: ::core::option::Option<Merchant>,
+    #[prost(message, repeated, tag = "2")]
+    pub accounts: ::prost::alloc::vec::Vec<MerchantAccount>,
+}
+/// 审核
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AuditMerchantRequest {
+    /// 关联的商家 ID
+    #[prost(string, tag = "1")]
+    pub merchant_id: ::prost::alloc::string::String,
+    /// 审核员的 ID (通常对应后台管理员账号 ID)
+    #[prost(string, tag = "2")]
+    pub auditor_id: ::prost::alloc::string::String,
+    /// 商家审核状态
+    #[prost(enumeration = "super::audit::AuditStatus", tag = "3")]
+    pub audit_status: i32,
+    /// 审核的备注或意见 (例如拒绝原因)
+    #[prost(string, tag = "4")]
+    pub audit_comments: ::prost::alloc::string::String,
+}
+/// 修改商户
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateMerchantRequest {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub short_name: ::prost::alloc::string::String,
+    #[prost(enumeration = "MerchantKind", tag = "4")]
+    pub kind: i32,
+    #[prost(message, optional, tag = "5")]
+    pub meta: ::core::option::Option<MerchantMeta>,
+}
+/// 获取单个商户
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetMerchantRequest {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(enumeration = "super::audit::AuditStatus", optional, tag = "2")]
+    pub status: ::core::option::Option<i32>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetMerchantReply {
+    #[prost(message, optional, tag = "1")]
+    pub merchant: ::core::option::Option<Merchant>,
+}
+/// 商户列表
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListMerchantsRequest {
+    #[prost(message, optional, tag = "1")]
+    pub pr: ::core::option::Option<super::paginate::PaginateRequest>,
+    #[prost(string, optional, tag = "2")]
+    pub name: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, optional, tag = "3")]
+    pub short_name: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(enumeration = "super::audit::AuditStatus", optional, tag = "4")]
+    pub status: ::core::option::Option<i32>,
+    #[prost(enumeration = "MerchantKind", optional, tag = "5")]
+    pub kind: ::core::option::Option<i32>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListMerchantsReply {
+    #[prost(message, optional, tag = "1")]
+    pub paginate: ::core::option::Option<super::paginate::Paginate>,
+    #[prost(message, repeated, tag = "2")]
+    pub merchant: ::prost::alloc::vec::Vec<Merchant>,
+}
+/// 添加账号
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MerchantAddAccountsRequest {
+    #[prost(string, tag = "1")]
+    pub merchant_id: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "2")]
+    pub accounts: ::prost::alloc::vec::Vec<MerchantAccount>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MerchantAddAccountsReply {
+    #[prost(string, repeated, tag = "1")]
+    pub ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// 删除账号
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MerchantRemoveAccountsRequest {
+    #[prost(string, tag = "1")]
+    pub merchant_id: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "2")]
+    pub ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// 修改账号密码
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MerchantUpdateAccountPasswordRequest {
+    #[prost(string, tag = "1")]
+    pub merchant_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub password: ::prost::alloc::string::String,
+}
+/// 修改账号
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateAccountRequest {
+    #[prost(string, tag = "1")]
+    pub merchant_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(bool, tag = "3")]
+    pub is_super: bool,
+    #[prost(int64, tag = "4")]
+    pub permission: i64,
+    #[prost(string, tag = "5")]
+    pub nickname: ::prost::alloc::string::String,
+}
+/// 单个账号
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MerchantGetAccountRequest {
+    #[prost(string, tag = "1")]
+    pub merchant_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MerchantGetAccountReply {
+    #[prost(message, optional, tag = "1")]
+    pub account: ::core::option::Option<MerchantAccount>,
+}
+/// 账号列表
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MerchantListAccountsRequest {
+    #[prost(message, optional, tag = "1")]
+    pub pr: ::core::option::Option<super::paginate::PaginateRequest>,
+    #[prost(string, optional, tag = "2")]
+    pub merchant_id: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, optional, tag = "3")]
+    pub email: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, optional, tag = "4")]
+    pub nickname: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(bool, optional, tag = "5")]
+    pub is_super: ::core::option::Option<bool>,
+    #[prost(int64, optional, tag = "6")]
+    pub permission: ::core::option::Option<i64>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MerchantListAccountsReply {
+    #[prost(message, optional, tag = "1")]
+    pub paginate: ::core::option::Option<super::paginate::Paginate>,
+    #[prost(message, repeated, tag = "2")]
+    pub accounts: ::prost::alloc::vec::Vec<MerchantAccount>,
+}
+/// Generated client implementations.
+pub mod merchant_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    #[derive(Debug, Clone)]
+    pub struct MerchantServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl MerchantServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> MerchantServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> MerchantServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            MerchantServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /// 创建
+        pub async fn create(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::IdReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/Create",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "Create"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 删除
+        pub async fn delete(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::req::IdRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/Delete",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "Delete"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 审核
+        pub async fn audit(
+            &mut self,
+            request: impl tonic::IntoRequest<super::AuditMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/Audit",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "Audit"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 修改商户
+        pub async fn update_name(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/UpdateName",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "UpdateName"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 获取单个商户
+        pub async fn get(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetMerchantReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/Get",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "Get"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 商户列表
+        pub async fn list(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListMerchantsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListMerchantsReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/List",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "List"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 添加账号
+        pub async fn add_accounts(
+            &mut self,
+            request: impl tonic::IntoRequest<super::MerchantAddAccountsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MerchantAddAccountsReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/AddAccounts",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "AddAccounts"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 删除账号
+        pub async fn remove_accounts(
+            &mut self,
+            request: impl tonic::IntoRequest<super::MerchantRemoveAccountsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/RemoveAccounts",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "RemoveAccounts"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 修改账号密码
+        pub async fn update_account_password(
+            &mut self,
+            request: impl tonic::IntoRequest<super::MerchantUpdateAccountPasswordRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/UpdateAccountPassword",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("merchant.MerchantService", "UpdateAccountPassword"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /// 修改账号
+        pub async fn update_account(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateAccountRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/UpdateAccount",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "UpdateAccount"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 获取单个账号
+        pub async fn get_account(
+            &mut self,
+            request: impl tonic::IntoRequest<super::MerchantGetAccountRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MerchantGetAccountReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/GetAccount",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "GetAccount"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 账号列表
+        pub async fn list_accounts(
+            &mut self,
+            request: impl tonic::IntoRequest<super::MerchantListAccountsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MerchantListAccountsReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/merchant.MerchantService/ListAccounts",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("merchant.MerchantService", "ListAccounts"));
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod merchant_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with MerchantServiceServer.
+    #[async_trait]
+    pub trait MerchantService: std::marker::Send + std::marker::Sync + 'static {
+        /// 创建
+        async fn create(
+            &self,
+            request: tonic::Request<super::CreateMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::IdReply>,
+            tonic::Status,
+        >;
+        /// 删除
+        async fn delete(
+            &self,
+            request: tonic::Request<super::super::req::IdRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 审核
+        async fn audit(
+            &self,
+            request: tonic::Request<super::AuditMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 修改商户
+        async fn update_name(
+            &self,
+            request: tonic::Request<super::UpdateMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 获取单个商户
+        async fn get(
+            &self,
+            request: tonic::Request<super::GetMerchantRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetMerchantReply>,
+            tonic::Status,
+        >;
+        /// 商户列表
+        async fn list(
+            &self,
+            request: tonic::Request<super::ListMerchantsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListMerchantsReply>,
+            tonic::Status,
+        >;
+        /// 添加账号
+        async fn add_accounts(
+            &self,
+            request: tonic::Request<super::MerchantAddAccountsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MerchantAddAccountsReply>,
+            tonic::Status,
+        >;
+        /// 删除账号
+        async fn remove_accounts(
+            &self,
+            request: tonic::Request<super::MerchantRemoveAccountsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 修改账号密码
+        async fn update_account_password(
+            &self,
+            request: tonic::Request<super::MerchantUpdateAccountPasswordRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 修改账号
+        async fn update_account(
+            &self,
+            request: tonic::Request<super::UpdateAccountRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 获取单个账号
+        async fn get_account(
+            &self,
+            request: tonic::Request<super::MerchantGetAccountRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MerchantGetAccountReply>,
+            tonic::Status,
+        >;
+        /// 账号列表
+        async fn list_accounts(
+            &self,
+            request: tonic::Request<super::MerchantListAccountsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MerchantListAccountsReply>,
+            tonic::Status,
+        >;
+    }
+    #[derive(Debug)]
+    pub struct MerchantServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> MerchantServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for MerchantServiceServer<T>
+    where
+        T: MerchantService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/merchant.MerchantService/Create" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::CreateMerchantRequest>
+                    for CreateSvc<T> {
+                        type Response = super::super::resp::IdReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreateMerchantRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::create(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/Delete" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::super::req::IdRequest>
+                    for DeleteSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::super::req::IdRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::delete(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/Audit" => {
+                    #[allow(non_camel_case_types)]
+                    struct AuditSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::AuditMerchantRequest>
+                    for AuditSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::AuditMerchantRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::audit(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = AuditSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/UpdateName" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateNameSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::UpdateMerchantRequest>
+                    for UpdateNameSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateMerchantRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::update_name(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateNameSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/Get" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::GetMerchantRequest>
+                    for GetSvc<T> {
+                        type Response = super::GetMerchantReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetMerchantRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::get(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/List" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::ListMerchantsRequest>
+                    for ListSvc<T> {
+                        type Response = super::ListMerchantsReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListMerchantsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::list(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/AddAccounts" => {
+                    #[allow(non_camel_case_types)]
+                    struct AddAccountsSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::MerchantAddAccountsRequest>
+                    for AddAccountsSvc<T> {
+                        type Response = super::MerchantAddAccountsReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::MerchantAddAccountsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::add_accounts(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = AddAccountsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/RemoveAccounts" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveAccountsSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::MerchantRemoveAccountsRequest>
+                    for RemoveAccountsSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::MerchantRemoveAccountsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::remove_accounts(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RemoveAccountsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/UpdateAccountPassword" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateAccountPasswordSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<
+                        super::MerchantUpdateAccountPasswordRequest,
+                    > for UpdateAccountPasswordSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::MerchantUpdateAccountPasswordRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::update_account_password(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateAccountPasswordSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/UpdateAccount" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateAccountSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::UpdateAccountRequest>
+                    for UpdateAccountSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateAccountRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::update_account(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateAccountSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/GetAccount" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetAccountSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::MerchantGetAccountRequest>
+                    for GetAccountSvc<T> {
+                        type Response = super::MerchantGetAccountReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::MerchantGetAccountRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::get_account(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetAccountSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/merchant.MerchantService/ListAccounts" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListAccountsSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::MerchantListAccountsRequest>
+                    for ListAccountsSvc<T> {
+                        type Response = super::MerchantListAccountsReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::MerchantListAccountsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::list_accounts(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListAccountsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for MerchantServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "merchant.MerchantService";
+    impl<T> tonic::server::NamedService for MerchantServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
