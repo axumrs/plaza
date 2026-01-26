@@ -8,6 +8,7 @@ pub mod helper;
 pub mod interceptors;
 pub mod jwt;
 pub mod mail;
+pub mod merchant;
 pub mod mw;
 pub mod pb;
 pub mod rds;

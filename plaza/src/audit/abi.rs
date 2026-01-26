@@ -21,3 +21,14 @@ impl Into<pb::audit::AuditStatus> for AuditStatus {
         }
     }
 }
+
+impl From<i32> for AuditStatus {
+    fn from(value: i32) -> Self {
+        match value {
+            0 => AuditStatus::Pending,
+            1 => AuditStatus::Approved,
+            2 => AuditStatus::Rejected,
+            _ => AuditStatus::default(),
+        }
+    }
+}
