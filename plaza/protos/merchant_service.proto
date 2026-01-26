@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package merchant;
+
+import "merchant_message.proto";

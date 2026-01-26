@@ -1,5 +1,6 @@
 pub mod audit;
 pub mod category;
+pub mod merchant;
 pub mod paginate;
 pub mod range;
 pub mod req;

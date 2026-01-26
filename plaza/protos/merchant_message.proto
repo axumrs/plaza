@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package merchant;
+
+import "google/protobuf/timestamp.proto";
+import "audit.proto";
+import "range.proto";
+
+// 商家类型
+enum MerchantKind  {
+    // 企业
+    Enterprise = 0;
+    // 个体户
+    SoleProprietorship = 1;
+    // 个人
+    Individual = 2;
+}
+
+// 商家
+message Merchant {
+  // 唯一标识符 (Rust 中的 id 通常对应数据库的主键)
+  string id = 1;
+
+  // 商户名称
+  string name = 2;
+
+  // 简称
+  string short_name = 3;
+
+  // 状态 (对应 audit::AuditStatus)
+  audit.AuditStatus status = 4;
+
+  // 类型 (对应 MerchantKind)
+  MerchantKind kind = 5;
+
+  // 创建时间
+  google.protobuf.Timestamp created_at = 6;
+
+  // 元数据 (在 Rust 中是 Json<MerchantMeta>)
+  // 在 Protobuf 中直接嵌套 Message 是最佳实践
+  MerchantMeta meta = 7;
+}
+
+// 定义照片对，用于替换 Rust 中的 (String, String)
+message ImagePair {
+  string front_url = 1; // 正面
+  string back_url = 2;  // 反面
+}
+
+// 商家元数据
+message MerchantMeta {
+  // 营业执照(照片)
+  optional string business_license = 1;
+  
+  // 证件注册号/统一社会信用代码
+  optional string business_license_number = 2;
+  
+  // 商户名称
+  optional string name = 3;
+  
+  // 商户简称
+  optional string short_name = 4;
+  
+  // 经营者/法定代表人姓名
+  optional string legal_representative_name = 5;
+  
+  // 营业期限
+  optional google.protobuf.Timestamp business_license_expiry_date = 6;
+  
+  // 注册地址
+  optional string registered_address = 7;
+  
+  // 经营者/法人身份证/护照照片（正反面）
+  optional ImagePair legal_representative_id_pic = 8;
+  
+  // 法人身份证姓名
+  optional string legal_representative_id_name = 9;
+  
+  // 法人身份证号
+  optional string legal_representative_id_number = 10;
+  
+  // 法人身份证有效期
+  optional range.DateRange legal_representative_id_expiry_date = 11;
+  
+  // 法人身份证地址
+  optional string legal_representative_id_address = 12;
+  
+  // 账户地址(web3钱包地址)
+  optional string account_address = 13;
+  
+  // 超级管理员类型,是否是法人(经营者/法人, 经办人)
+  optional bool super_admin_is_legal_representative = 14;
+  
+  // 超级管理员(如果是经办人)身份证/护照照片(正反面)
+  optional ImagePair super_admin_id_pic = 15;
+  
+  // 超级管理员(如果是经办人)身份证有效期
+  optional range.DateRange super_admin_id_expiry_date = 16;
+  
+  // 超级管理员身份证姓名
+  optional string super_admin_id_name = 17;
+  
+  // 超级管理员身份证号
+  optional string super_admin_id_number = 18;
+  
+  // 超级管理员手机号码
+  optional string super_admin_phone = 19;
+  
+  // 超级管理员邮箱
+  optional string super_admin_email = 20;
+  
+  // 特殊资质（照片，0~5张）
+  repeated string special_qualification_pics = 21;
+  
+  // 补充材料（照片，0~5张）
+  repeated string supplementary_material_pics = 22;
+  
+  // 补充说明（0~500个字）
+  optional string supplementary_explain = 23;
+}
+
+// 商家账号
+message MerchantAccount {
+  // 账号唯一 ID
+  string id = 1;
+
+  // 关联的商家 ID
+  string merchant_id = 2;
+
+  // 登录邮箱
+  string email = 3;
+
+  // 密码 (注意：建议仅在内部认证服务间使用，对外 API 建议忽略此字段)
+  string password = 4;
+
+  // 昵称
+  string nickname = 5;
+
+  // 是否为超级管理员
+  bool is_super = 6;
+
+  // 权限位 (Rust 中的 i64 对应 int64)
+  // 通常用于位运算权限控制
+  int64 permission = 7;
+
+  // 创建时间
+  google.protobuf.Timestamp created_at = 8;
+}
+
+// 商家审核
+message MerchantAudit {
+  // 审核记录唯一 ID
+  string id = 1;
+
+  // 关联的商家 ID
+  string merchant_id = 2;
+
+  // 审核员的 ID (通常对应后台管理员账号 ID)
+  string auditor_id = 3;
+
+  // 商家审核状态
+  audit.AuditStatus audit_status = 4;
+
+  // 审核的备注或意见 (例如拒绝原因)
+  string audit_comments = 5;
+
+  // 审核的时间
+  google.protobuf.Timestamp audit_date = 6;
+}
