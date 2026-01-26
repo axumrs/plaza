@@ -229,6 +229,8 @@ pub struct AuditMerchantRequest {
     /// 审核的备注或意见 (例如拒绝原因)
     #[prost(string, tag = "4")]
     pub audit_comments: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub id: ::prost::alloc::string::String,
 }
 /// 修改商户
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

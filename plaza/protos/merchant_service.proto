@@ -27,6 +27,8 @@ message AuditMerchantRequest {
 
   // 审核的备注或意见 (例如拒绝原因)
   string audit_comments = 4;
+
+  string id = 5;
 }
 
 // 修改商户

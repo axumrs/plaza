@@ -6,7 +6,7 @@ CREATE TYPE merchant_kind AS ENUM (
 );
 
 -- 商户
-CREATE TABLE "merchant" (
+CREATE TABLE "merchants" (
     -- ID 使用 CHAR(20)，适用于 KSUID 或自定义固定长度分布式 ID
     "id"           CHAR(20) PRIMARY KEY,
     -- 商户名称
@@ -25,7 +25,7 @@ CREATE TABLE "merchant" (
 );
 
 -- 商家账户
-CREATE TABLE "merchant_account" (
+CREATE TABLE "merchant_accounts" (
     -- ID 使用 CHAR(20)，建议存放 KSUID 或 Snowflake ID
     "id"           CHAR(20) PRIMARY KEY,
     -- 关联到商家表的 ID
@@ -45,7 +45,7 @@ CREATE TABLE "merchant_account" (
 );
 
 -- 商家入驻审核
-CREATE TABLE "merchant_audit" (
+CREATE TABLE "merchant_audits" (
     -- 审核记录 ID
     "id"               CHAR(20) PRIMARY KEY,
     -- 被审核的商家 ID
