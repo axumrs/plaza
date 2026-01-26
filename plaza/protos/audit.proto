@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package audit;
+
+enum AuditStatus  {
+    // 待审核
+    Pending = 0;
+    // 审核通过
+    Approved = 1;
+    // 拒绝
+    Rejected = 2;
+}

@@ -1,4 +1,5 @@
 pub mod api_resp;
+pub mod audit;
 pub mod captcha;
 pub mod category;
 pub mod config;

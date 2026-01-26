@@ -1,3 +1,4 @@
+pub mod audit;
 pub mod category;
 pub mod paginate;
 pub mod range;
