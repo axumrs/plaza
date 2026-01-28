@@ -153,10 +153,8 @@ impl pb::brand::brand_service_server::BrandService for BrandSrv {
         let mut qc = QueryBuilder::new(r#"SELECT COUNT(*) FROM "brands" WHERE 1=1"#);
 
         if let Some(v) = &r.name {
-            q.push(r#" AND "name" ILIKE "%"#)
-                .push_bind(format!("%{v}%"));
-            qc.push(r#" AND "name" ILIKE "%"#)
-                .push_bind(format!("%{v}%"));
+            q.push(r#" AND "name" ILIKE "#).push_bind(format!("%{v}%"));
+            qc.push(r#" AND "name" ILIKE "#).push_bind(format!("%{v}%"));
         }
 
         let count: i64 = qc

@@ -1,0 +1,77 @@
+syntax = "proto3";
+package shop;
+
+import "shop_message.proto";
+import "resp.proto";
+import "req.proto";
+import "audit.proto";
+import "paginate.proto";
+
+// 更新已缴纳的保证金
+message UpdateDepositRequest {
+    string id = 1;
+    string merchant_id = 2;
+    int64 deposit = 3;   
+}
+
+// 更新状态
+message UpdateStatusRequest{
+    string id = 1;
+    string merchant_id = 2;
+    audit.AuditStatus status = 3;
+}
+
+// 获取单个
+message GetRequest{
+    oneof by  {
+        string id = 1;
+        string name = 2;
+    }
+    string merchant_id = 3;
+}
+message GetReply{
+    optional Shop shop = 1;
+}
+
+// 分页列表
+message ListRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string name = 2;
+    optional ShopKind kind = 3;
+    optional string category_id = 4;
+    optional string merchant_id = 5;
+}
+message ListReply{
+    paginate.Paginate paginate = 1;
+    repeated Shop shops = 2;
+}
+
+// 是否存在
+message ExistsRequest{
+    string name = 1;
+    optional string id = 2;
+}
+message ExistsReply{
+    bool exists = 1;
+}
+
+service ShopService {
+    // 创建
+    rpc Create(Shop) returns (resp.IdReply);
+    // 更新
+    rpc Update(Shop) returns (resp.AffReply);
+    // 删除
+    rpc Delete(req.IdRequest) returns (resp.AffReply);
+    // 更新已缴纳的保证金
+    rpc UpdateDeposit(UpdateDepositRequest) returns (resp.AffReply);
+    // 更新状态
+    rpc UpdateStatus(UpdateStatusRequest) returns (resp.AffReply);
+    // 获取单个
+    rpc Get(GetRequest) returns (GetReply);
+    // 分页列表
+    rpc List(ListRequest) returns (ListReply);
+    // 是否已存在
+    rpc Exists(ExistsRequest) returns (ExistsReply);
+    // 审核
+    rpc Audit(ShopAudit) returns(resp.AffReply);
+}
