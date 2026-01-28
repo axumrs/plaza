@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package brand;
+
+import "google/protobuf/timestamp.proto";
+
+// 品牌
+message Brand {
+  // 品牌 ID (对应 CHAR(20))
+  string id = 1;
+
+  // 品牌名称 (唯一)
+  string name = 2;
+
+  // 品牌 LOGO URL
+  string logo = 3;
+
+  // 创建时间
+  google.protobuf.Timestamp created_at = 4;
+}

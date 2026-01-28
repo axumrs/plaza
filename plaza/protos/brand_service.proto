@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package brand;
+
+import "brand_message.proto";
+import "resp.proto";
+import "req.proto";
+import "paginate.proto";
+
+// 查找
+message GetBrandReply {
+    optional Brand brand = 1;
+}
+
+// 分页列表
+message ListBrandRequest {
+    paginate.PaginateRequest pr = 1;
+    optional string name = 2;
+}
+message ListBrandReply {
+    paginate.Paginate paginate = 1;
+    repeated Brand brands = 2;
+}
+
+
+service BrandService {
+    // 创建
+    rpc Create(Brand) returns (resp.IdReply);
+    // 修改
+    rpc Update(Brand) returns (resp.AffReply);
+    // 删除
+    rpc Delete(req.IdRequest) returns (resp.AffReply);
+    // 查找
+    rpc Get(req.IdRequest) returns (GetBrandReply);
+    // 分页列表
+    rpc List(ListBrandRequest) returns (ListBrandReply);
+}
