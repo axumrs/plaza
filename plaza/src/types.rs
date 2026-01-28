@@ -22,3 +22,7 @@ pub fn chrono2prost(ts: Timestamp) -> Option<prost_types::Timestamp> {
 pub fn chrono_now_to_prost() -> Option<prost_types::Timestamp> {
     chrono2prost(chrono::Utc::now())
 }
+
+pub fn chrono_now() -> Timestamp {
+    chrono::Utc::now()
+}

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package shop;
+
+import "google/protobuf/timestamp.proto";
+import "audit.proto";
+import "range.proto";
+
+// 店铺类型
+enum ShopKind {
+  Standard = 0;           // 普通店
+  OfficialFlagship = 1;  // 官方旗舰店
+  Flagship = 2;           // 旗舰店
+  MallFlagship = 3;      // 卖场旗舰店
+  Specialty = 4;          // 专卖店
+  Franchise = 5;          // 专营店
+}
+
+message Shop {
+  string id = 1;
+  string merchant_id = 2;
+  string category_id = 3;
+  int64 deposit = 4;                // 对应 BIGINT
+  string name = 5;
+  ShopKind kind = 6;
+  string description = 7;
+  google.protobuf.Timestamp created_at = 8;
+  audit.AuditStatus status = 9;
+  ShopMeta meta = 10;                 // 存储为 JSON 字符串
+  bool is_platform_self_operated = 11; // 是否平台自营
+}
+
+message ShopMeta {
+    // 授权方 (如：品牌所有者/公司名)
+  string licensor = 1;
+
+  // 品牌名称
+  string brand_name = 2;
+
+  // 被授权方 (通常为当前商户公司名)
+  string licensee = 3;
+
+  // 授权有效期/期限 (建议使用 Timestamp 记录具体的截止日期)
+  range.DateRange expiry_date = 4;
+
+  // 授权起始日期/签署日期
+  google.protobuf.Timestamp authorization_date = 5;
+
+  // 证明文件
+  repeated string proof = 6;
+}
+
+// 店铺审核
+message ShopAudit {
+  string id = 1;
+  string merchant_id = 2;
+  string shop_id = 3;
+  string auditor_id = 4;
+  audit.AuditStatus audit_status = 5;
+  string audit_comments = 6;
+  google.protobuf.Timestamp audit_date = 7;
+}

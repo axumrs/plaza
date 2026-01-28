@@ -13,6 +13,7 @@ pub mod merchant;
 pub mod mw;
 pub mod pb;
 pub mod rds;
+pub mod shop;
 pub mod types;
 pub mod user;
 pub mod user_auth;

@@ -32,3 +32,13 @@ impl From<i32> for AuditStatus {
         }
     }
 }
+
+impl Into<i32> for AuditStatus {
+    fn into(self) -> i32 {
+        match self {
+            AuditStatus::Pending => 0,
+            AuditStatus::Approved => 1,
+            AuditStatus::Rejected => 2,
+        }
+    }
+}
