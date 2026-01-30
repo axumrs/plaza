@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "shops" (
     "description" VARCHAR(255) NOT NULL DEFAULT '',                        -- 店铺的描述
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 店铺创建时间
     "status" audit_status NOT NULL DEFAULT 'Pending', -- 店铺状态
-    "meta" JSONB NOT NULL DEFAULT '{}' -- 元数据
+    "meta" JSONB NOT NULL DEFAULT '{}', -- 元数据
 	"is_platform_self_operated" BOOLEAN NOT NULL DEFAULT FALSE -- 是否平台自营
 );
 
