@@ -1,6 +1,7 @@
 pub mod audit;
 pub mod brand;
 pub mod category;
+pub mod goods;
 pub mod merchant;
 pub mod paginate;
 pub mod range;

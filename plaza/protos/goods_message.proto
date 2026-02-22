@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package goods;
+
+import "google/protobuf/timestamp.proto";
+
+// 商品状态
+enum GoodsStatus {
+  Available = 0;           // 上架
+  Unavailable = 1; // 下架
+}
+
+// SKU 元数据
+message GoodsSkuMeta {
+    string name = 1;
+    repeated string items = 2;
+}
+
+// 商品参数
+message GoodsArgument {
+    string name = 1;
+    string value = 2;
+}
+
+// 商品
+message Goods {
+    string id = 1;
+    string shop_id = 2; // 店铺
+    bool is_vir = 3; // 是否虚拟商品
+    string category_id = 4; // 分类
+    string name = 5; // 名称
+    repeated string images = 6; // 图片
+    GoodsStatus status = 7; // 状态
+    string detail = 8; // 详情
+    bool comment_need_audit = 9; // 评论需要审核
+    repeated string service_guarantee = 10; // 服务保障
+    repeated string tags = 11; // 标签
+    repeated GoodsArgument arguments = 12; // 参数
+    int64 stock = 13; // 总库存
+    int64 sales = 14; // 总销量
+    repeated GoodsSkuMeta sku_meta = 15; // sku
+    int32 fare = 16; // 运费
+    repeated string recommendations = 17; // 商品推荐
+    google.protobuf.Timestamp created_at = 18;
+    google.protobuf.Timestamp updated_at = 19;
+}
+
+// 商品属性
+message goods_attr {
+    string id = 1;
+    string goods_id = 2; // 商品
+    repeated string sku_arr = 3; // sku
+    int64 stock = 4; // 库存
+    int64 price = 5; // 价格
+    int64 sales = 6; // 销量
+    string code = 7; // 编号
+    string bar_code = 8; // 条码
+    int32 volume = 9; // 体积（cm3）
+    int32 weight = 10; // 重量（kg）
+}
+
+// 商品评论
+message goods_comment {
+    string id = 1;
+    string goods_id = 2; // 商品
+    string goods_full_name = 3; // 商品名称（含规格）
+    bool is_self = 4; // 是否商家自评
+    string user_id = 5; // 用户（商家自评时，为空）
+    string user_avatar = 6; // 用户头像（商家自评时，可以杜撰）
+    string user_nickname = 7; // 用户昵称（商家自评时，可以杜撰）
+    string content = 8; // 内容
+    int32 goods_star = 9; // 商品评分
+    int32 service_star = 10; // 服务评分
+    repeated string images = 11; // 图片
+    google.protobuf.Timestamp created_at = 12;
+}

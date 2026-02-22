@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS "goods"( -- 商品
 	"stock" BIGINT CHECK ("stock" >= 0) NOT NULL DEFAULT 0 , -- 库存总计
 	"sales" BIGINT CHECK ("sales" >= 0) NOT NULL DEFAULT 0, -- 销量总计
 	"sku_meta" goods_sku_meta[] NOT NULL DEFAULT '{}', -- SKU
-	"fare" BIGINT CHECK ( "fare" >= 0 ) NOT NULL DEFAULT 0, -- 运费
+	"fare" INTEGER CHECK ( "fare" >= 0 ) NOT NULL DEFAULT 0, -- 运费
 	"recommendations" VARCHAR[] NOT NULL DEFAULT '{}', -- 商品推荐
 	"created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -55,12 +55,12 @@ CREATE TABLE IF NOT EXISTS "goods_comments" ( -- 商品评论
     "goods_id" CHAR(20) NOT NULL, -- 商品
     "goods_full_name" VARCHAR NOT NULL, -- 商品名称（含规格）
     "is_self" BOOLEAN NOT NULL DEFAULT FALSE,  -- 是否商家自评
-    "user_id" CHAR(20) NOT NULL, -- 用户（商家自评时，为空）
-    "user_avatar" VARCHAR NOT NULL, -- 用户头像（商家自评时，可以杜撰）
-    "user_nickname" VARCHAR NOT NULL, -- 用户昵称（商家自评时，可以杜撰）
-    "content" TEXT NOT NULL, -- 评论内容
-    "goods_star" INT NOT NULL, -- 商品评分
-    "service_star" INT NOT NULL, -- 服务评分
+    "user_id" CHAR(20) NOT NULL DEFAULT '', -- 用户（商家自评时，为空）
+    "user_avatar" VARCHAR NOT NULL DEFAULT '', -- 用户头像（商家自评时，可以杜撰）
+    "user_nickname" VARCHAR NOT NULL DEFAULT '', -- 用户昵称（商家自评时，可以杜撰）
+    "content" TEXT NOT NULL DEFAULT '', -- 评论内容
+    "goods_star" INTEGER NOT NULL CHECK(goods_star >= 1 AND goods_star <= 5), -- 商品评分
+    "service_star" INTEGER NOT NULL CHECK(service_star >= 1 AND service_star <= 5), -- 服务评分
     "images" VARCHAR[] NOT NULL DEFAULT '{}', -- 图片
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
