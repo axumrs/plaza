@@ -1,5 +1,15 @@
 CREATE TYPE "goods_status" AS ENUM ('Available', 'Unavailable'); -- 商品状态
 
+CREATE TYPE "goods_sku_meta" AS ( -- SKU 元数据
+	"name" VARCHAR,
+	"items" VARCHAR[]
+);
+
+CREATE TYPE "goods_argument" AS ( -- 参数
+	"name" VARCHAR,
+	"value" VARCHAR
+);
+
 CREATE TABLE IF NOT EXISTS "goods"( -- 商品
 	"id" CHAR(20) PRIMARY KEY,
 	"shop_id" CHAR(20) NOT NULL, -- 店铺
@@ -12,18 +22,33 @@ CREATE TABLE IF NOT EXISTS "goods"( -- 商品
 	"comment_need_audit" BOOLEAN NOT NULL DEFAULT FALSE, -- 评论需审核
 	"service_guarantee" VARCHAR[] NOT NULL DEFAULT '{}', -- 服务保障
 	"tags" VARCHAR[] NOT NULL DEFAULT '{}', -- 标签
-	"arguments" JSONB NOT NULL DEFAULT '[]', -- 参数
-	"has_sku" BOOLEAN NOT NULL DEFAULT FALSE, -- 是否有SKU（多规格）
+	"arguments" goods_argument[] NOT NULL DEFAULT '{}', -- 参数
 	"stock" BIGINT CHECK ("stock" >= 0) NOT NULL DEFAULT 0 , -- 库存总计
 	"sales" BIGINT CHECK ("sales" >= 0) NOT NULL DEFAULT 0, -- 销量总计
-	"sku" JSONB NOT NULL DEFAULT '[]', -- SKU
+	"sku_meta" goods_sku_meta[] NOT NULL DEFAULT '{}', -- SKU
 	"fare" BIGINT CHECK ( "fare" >= 0 ) NOT NULL DEFAULT 0, -- 运费
 	"recommendations" VARCHAR[] NOT NULL DEFAULT '{}', -- 商品推荐
 	"created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS "idx_goods_sku" ON "goods" USING GIN ("sku");
+CREATE TABLE IF NOT EXISTS "goods_attrs" ( -- 商品属性
+	"id" CHAR(20) PRIMARY KEY,
+	"goods_id" CHAR(20) NOT NULL, -- 商品
+	"sku_arr" VARCHAR[] NOT NULL DEFAULT '{}', -- SKU(数组)
+	"stock" BIGINT CHECK ("stock" >= 0) NOT NULL DEFAULT 0, -- 库存
+	"price" BIGINT CHECK ("price" >= 0) NOT NULL DEFAULT 0, -- 价格
+	"sales" BIGINT CHECK ("sales" >= 0) NOT NULL DEFAULT 0, -- 销量
+	-- 商品编号
+	"code" VARCHAR NOT NULL DEFAULT '',
+	-- 商品条码
+	"bar_code" VARCHAR NOT NULL DEFAULT '',
+	-- 体积(cm3)
+	"volume" INTEGER CHECK ("volume" >= 0) NOT NULL DEFAULT 0,
+	-- 重量(kg)
+	"weight" INTEGER CHECK ("weight" >= 0) NOT NULL DEFAULT 0
+);
+
 
 CREATE TABLE IF NOT EXISTS "goods_comments" ( -- 商品评论
     "id" CHAR(20) PRIMARY KEY,
