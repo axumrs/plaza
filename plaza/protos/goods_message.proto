@@ -46,7 +46,7 @@ message Goods {
 }
 
 // 商品属性
-message goods_attr {
+message GoodsAttr {
     string id = 1;
     string goods_id = 2; // 商品
     repeated string sku_arr = 3; // sku
@@ -61,7 +61,7 @@ message goods_attr {
 }
 
 // 商品评论
-message goods_comment {
+message GoodsComment {
     string id = 1;
     string goods_id = 2; // 商品
     string goods_full_name = 3; // 商品名称（含规格）

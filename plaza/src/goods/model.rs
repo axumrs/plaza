@@ -127,3 +127,20 @@ pub struct GoodsComment {
     pub images: Vec<String>, // 评论图片
     pub created_at: types::Timestamp,
 }
+
+/// 商品信息
+pub struct GoodsInfo {
+    pub goods: Goods,
+    pub metas: Vec<GoodsSkuMeta>,
+    pub attrs: Vec<GoodsAttr>,
+}
+
+/// 商品评价级别
+pub enum GoodsStarLevel {
+    /// 好评
+    Positive,
+    /// 中评
+    Neutral,
+    /// 差评
+    Negative,
+}

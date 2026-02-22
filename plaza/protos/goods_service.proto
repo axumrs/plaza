@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package goods;
+
+import "goods_message.proto";
+import "resp.proto";
+import "req.proto";
+import "paginate.proto";
+
+
+message GoodsInfo {
+    Goods goods = 1;
+    repeated GoodsSkuMeta metas = 2;
+    repeated GoodsAttr attrs = 3;
+}
+message UpdateRequest {
+    Goods goods = 1;
+    repeated GoodsSkuMeta metas = 2;
+    repeated GoodsAttr attrs = 3;
+}
+
+// 修改库存
+message UpdateStockRequest {
+    string goods_id = 1;
+    repeated string sku = 2;
+    int64 stock = 3;
+}
+
+// 扣减库存
+message DecrementStockRequest {
+    string goods_id = 1;
+    repeated string sku = 2;
+    // 需要扣减的库存数量，默认为1
+    optional int64 stock_value = 3;
+}
+
+// 获取SKU
+message GetSkuReply {
+    repeated GoodsSkuMeta sku_meta = 1;
+    string goods_id = 2;
+}
+
+// 获取单个商品
+message GetReply {
+    optional GoodsInfo goods = 1;
+}
+
+// 商品列表
+message ListRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string shop_id = 2;
+    optional string category_id = 3;
+    optional bool is_vir = 4;
+    optional string name = 5;
+}
+message ListReply{
+    paginate.Paginate paginate = 1;
+    repeated GoodsInfo goods = 2;
+}
+
+// 商品评价级别
+enum GoodsStarLevel {
+    // 好评
+    Positive = 0;
+    // 中评
+    Neutral = 1;
+    // 差评
+    Negative = 2;
+}
+
+// 计算评分
+message CalcStarReply {
+    string goods_id = 1;
+    int32 goods_star = 2; // 商品评分
+    int32 service_star = 3; // 服务评分
+    GoodsStarLevel goods_star_level = 4; // 商品评价级别
+    GoodsStarLevel service_star_level = 5; // 服务评价级别
+    GoodsStarLevel star_level = 6; // 综合评价级别
+}
+
+// 单条评价
+message GetCommentRequest {
+    string id = 1;
+    string goods_id = 2;
+}
+message GetCommentReply {
+    optional GoodsComment comment = 1;
+}
+
+// 评价列表
+message ListCommentsRequest {
+    paginate.PaginateRequest pr = 1;
+    string goods_id = 2;
+}
+message ListCommentsReply {
+    paginate.Paginate paginate = 1;
+    repeated GoodsComment comments = 2;
+}
+
+service GoodsService {
+    // 添加商品
+    rpc Create(GoodsInfo) returns (resp.IdReply);
+    // 修改商品
+    rpc Update(UpdateRequest) returns (resp.AffReply);
+    // 删除
+    rpc Delete(req.IdRequest) returns (resp.AffReply);
+    // 修改库存
+    rpc UpdateStock(UpdateStockRequest) returns(resp.AffReply);
+    // 扣减库存
+    rpc DecrementStock(DecrementStockRequest) returns (resp.AffReply);
+    // 获取SKU
+    rpc GetSku(req.IdRequest) returns (GetSkuReply);
+    // 获取单个商品
+    rpc Get(req.IdRequest) returns (GetReply);
+    // 商品列表
+    rpc List(ListRequest) returns (ListReply);
+
+    // 添加评价
+    rpc CreateComment(GoodsComment) returns(resp.IdReply);
+    // 计算评分
+    rpc CalcStar(req.IdRequest) returns (CalcStarReply);
+    // 获取单条评价
+    rpc GetComment(GetCommentRequest) returns(GetCommentReply);
+    // 评价列表
+    rpc ListComments(ListCommentsRequest) returns(ListCommentsReply);
+}

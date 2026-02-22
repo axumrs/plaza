@@ -175,3 +175,1277 @@ impl GoodsStatus {
         }
     }
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GoodsInfo {
+    #[prost(message, optional, tag = "1")]
+    pub goods: ::core::option::Option<Goods>,
+    #[prost(message, repeated, tag = "2")]
+    pub metas: ::prost::alloc::vec::Vec<GoodsSkuMeta>,
+    #[prost(message, repeated, tag = "3")]
+    pub attrs: ::prost::alloc::vec::Vec<GoodsAttr>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateRequest {
+    #[prost(message, optional, tag = "1")]
+    pub goods: ::core::option::Option<Goods>,
+    #[prost(message, repeated, tag = "2")]
+    pub metas: ::prost::alloc::vec::Vec<GoodsSkuMeta>,
+    #[prost(message, repeated, tag = "3")]
+    pub attrs: ::prost::alloc::vec::Vec<GoodsAttr>,
+}
+/// 修改库存
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateStockRequest {
+    #[prost(string, tag = "1")]
+    pub goods_id: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "2")]
+    pub sku: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(int64, tag = "3")]
+    pub stock: i64,
+}
+/// 扣减库存
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DecrementStockRequest {
+    #[prost(string, tag = "1")]
+    pub goods_id: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "2")]
+    pub sku: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// 需要扣减的库存数量，默认为1
+    #[prost(int64, optional, tag = "3")]
+    pub stock_value: ::core::option::Option<i64>,
+}
+/// 获取SKU
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetSkuReply {
+    #[prost(message, repeated, tag = "1")]
+    pub sku_meta: ::prost::alloc::vec::Vec<GoodsSkuMeta>,
+    #[prost(string, tag = "2")]
+    pub goods_id: ::prost::alloc::string::String,
+}
+/// 获取单个商品
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetReply {
+    #[prost(message, optional, tag = "1")]
+    pub goods: ::core::option::Option<GoodsInfo>,
+}
+/// 商品列表
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListRequest {
+    #[prost(message, optional, tag = "1")]
+    pub pr: ::core::option::Option<super::paginate::PaginateRequest>,
+    #[prost(string, optional, tag = "2")]
+    pub shop_id: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, optional, tag = "3")]
+    pub category_id: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(bool, optional, tag = "4")]
+    pub is_vir: ::core::option::Option<bool>,
+    #[prost(string, optional, tag = "5")]
+    pub name: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListReply {
+    #[prost(message, optional, tag = "1")]
+    pub paginate: ::core::option::Option<super::paginate::Paginate>,
+    #[prost(message, repeated, tag = "2")]
+    pub goods: ::prost::alloc::vec::Vec<GoodsInfo>,
+}
+/// 计算评分
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CalcStarReply {
+    #[prost(string, tag = "1")]
+    pub goods_id: ::prost::alloc::string::String,
+    /// 商品评分
+    #[prost(int32, tag = "2")]
+    pub goods_star: i32,
+    /// 服务评分
+    #[prost(int32, tag = "3")]
+    pub service_star: i32,
+    /// 商品评价级别
+    #[prost(enumeration = "GoodsStarLevel", tag = "4")]
+    pub goods_star_level: i32,
+    /// 服务评价级别
+    #[prost(enumeration = "GoodsStarLevel", tag = "5")]
+    pub service_star_level: i32,
+    /// 综合评价级别
+    #[prost(enumeration = "GoodsStarLevel", tag = "6")]
+    pub star_level: i32,
+}
+/// 单条评价
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCommentRequest {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub goods_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCommentReply {
+    #[prost(message, optional, tag = "1")]
+    pub comment: ::core::option::Option<GoodsComment>,
+}
+/// 评价列表
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListCommentsRequest {
+    #[prost(message, optional, tag = "1")]
+    pub pr: ::core::option::Option<super::paginate::PaginateRequest>,
+    #[prost(string, tag = "2")]
+    pub goods_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListCommentsReply {
+    #[prost(message, optional, tag = "1")]
+    pub paginate: ::core::option::Option<super::paginate::Paginate>,
+    #[prost(message, repeated, tag = "2")]
+    pub comments: ::prost::alloc::vec::Vec<GoodsComment>,
+}
+/// 商品评价级别
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum GoodsStarLevel {
+    /// 好评
+    Positive = 0,
+    /// 中评
+    Neutral = 1,
+    /// 差评
+    Negative = 2,
+}
+impl GoodsStarLevel {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Positive => "Positive",
+            Self::Neutral => "Neutral",
+            Self::Negative => "Negative",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "Positive" => Some(Self::Positive),
+            "Neutral" => Some(Self::Neutral),
+            "Negative" => Some(Self::Negative),
+            _ => None,
+        }
+    }
+}
+/// Generated client implementations.
+pub mod goods_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    #[derive(Debug, Clone)]
+    pub struct GoodsServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl GoodsServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> GoodsServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> GoodsServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            GoodsServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        /// 添加商品
+        pub async fn create(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GoodsInfo>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::IdReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/Create",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("goods.GoodsService", "Create"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 修改商品
+        pub async fn update(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/Update",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("goods.GoodsService", "Update"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 删除
+        pub async fn delete(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::req::IdRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/Delete",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("goods.GoodsService", "Delete"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 修改库存
+        pub async fn update_stock(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateStockRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/UpdateStock",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("goods.GoodsService", "UpdateStock"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 扣减库存
+        pub async fn decrement_stock(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DecrementStockRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/DecrementStock",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("goods.GoodsService", "DecrementStock"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 获取SKU
+        pub async fn get_sku(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::req::IdRequest>,
+        ) -> std::result::Result<tonic::Response<super::GetSkuReply>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/GetSku",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("goods.GoodsService", "GetSku"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 获取单个商品
+        pub async fn get(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::req::IdRequest>,
+        ) -> std::result::Result<tonic::Response<super::GetReply>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/goods.GoodsService/Get");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("goods.GoodsService", "Get"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 商品列表
+        pub async fn list(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListRequest>,
+        ) -> std::result::Result<tonic::Response<super::ListReply>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/goods.GoodsService/List");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("goods.GoodsService", "List"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 添加评价
+        pub async fn create_comment(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GoodsComment>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::IdReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/CreateComment",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("goods.GoodsService", "CreateComment"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 计算评分
+        pub async fn calc_star(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::req::IdRequest>,
+        ) -> std::result::Result<tonic::Response<super::CalcStarReply>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/CalcStar",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("goods.GoodsService", "CalcStar"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 获取单条评价
+        pub async fn get_comment(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCommentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCommentReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/GetComment",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("goods.GoodsService", "GetComment"));
+            self.inner.unary(req, path, codec).await
+        }
+        /// 评价列表
+        pub async fn list_comments(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListCommentsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListCommentsReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/goods.GoodsService/ListComments",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("goods.GoodsService", "ListComments"));
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod goods_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with GoodsServiceServer.
+    #[async_trait]
+    pub trait GoodsService: std::marker::Send + std::marker::Sync + 'static {
+        /// 添加商品
+        async fn create(
+            &self,
+            request: tonic::Request<super::GoodsInfo>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::IdReply>,
+            tonic::Status,
+        >;
+        /// 修改商品
+        async fn update(
+            &self,
+            request: tonic::Request<super::UpdateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 删除
+        async fn delete(
+            &self,
+            request: tonic::Request<super::super::req::IdRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 修改库存
+        async fn update_stock(
+            &self,
+            request: tonic::Request<super::UpdateStockRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 扣减库存
+        async fn decrement_stock(
+            &self,
+            request: tonic::Request<super::DecrementStockRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::AffReply>,
+            tonic::Status,
+        >;
+        /// 获取SKU
+        async fn get_sku(
+            &self,
+            request: tonic::Request<super::super::req::IdRequest>,
+        ) -> std::result::Result<tonic::Response<super::GetSkuReply>, tonic::Status>;
+        /// 获取单个商品
+        async fn get(
+            &self,
+            request: tonic::Request<super::super::req::IdRequest>,
+        ) -> std::result::Result<tonic::Response<super::GetReply>, tonic::Status>;
+        /// 商品列表
+        async fn list(
+            &self,
+            request: tonic::Request<super::ListRequest>,
+        ) -> std::result::Result<tonic::Response<super::ListReply>, tonic::Status>;
+        /// 添加评价
+        async fn create_comment(
+            &self,
+            request: tonic::Request<super::GoodsComment>,
+        ) -> std::result::Result<
+            tonic::Response<super::super::resp::IdReply>,
+            tonic::Status,
+        >;
+        /// 计算评分
+        async fn calc_star(
+            &self,
+            request: tonic::Request<super::super::req::IdRequest>,
+        ) -> std::result::Result<tonic::Response<super::CalcStarReply>, tonic::Status>;
+        /// 获取单条评价
+        async fn get_comment(
+            &self,
+            request: tonic::Request<super::GetCommentRequest>,
+        ) -> std::result::Result<tonic::Response<super::GetCommentReply>, tonic::Status>;
+        /// 评价列表
+        async fn list_comments(
+            &self,
+            request: tonic::Request<super::ListCommentsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListCommentsReply>,
+            tonic::Status,
+        >;
+    }
+    #[derive(Debug)]
+    pub struct GoodsServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> GoodsServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for GoodsServiceServer<T>
+    where
+        T: GoodsService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/goods.GoodsService/Create" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateSvc<T: GoodsService>(pub Arc<T>);
+                    impl<T: GoodsService> tonic::server::UnaryService<super::GoodsInfo>
+                    for CreateSvc<T> {
+                        type Response = super::super::resp::IdReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GoodsInfo>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::create(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/Update" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::UpdateRequest>
+                    for UpdateSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::update(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/Delete" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::super::req::IdRequest>
+                    for DeleteSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::super::req::IdRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::delete(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/UpdateStock" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateStockSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::UpdateStockRequest>
+                    for UpdateStockSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateStockRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::update_stock(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateStockSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/DecrementStock" => {
+                    #[allow(non_camel_case_types)]
+                    struct DecrementStockSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::DecrementStockRequest>
+                    for DecrementStockSvc<T> {
+                        type Response = super::super::resp::AffReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DecrementStockRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::decrement_stock(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DecrementStockSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/GetSku" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetSkuSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::super::req::IdRequest>
+                    for GetSkuSvc<T> {
+                        type Response = super::GetSkuReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::super::req::IdRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::get_sku(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetSkuSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/Get" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::super::req::IdRequest>
+                    for GetSvc<T> {
+                        type Response = super::GetReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::super::req::IdRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::get(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/List" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListSvc<T: GoodsService>(pub Arc<T>);
+                    impl<T: GoodsService> tonic::server::UnaryService<super::ListRequest>
+                    for ListSvc<T> {
+                        type Response = super::ListReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::list(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/CreateComment" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateCommentSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::GoodsComment>
+                    for CreateCommentSvc<T> {
+                        type Response = super::super::resp::IdReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GoodsComment>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::create_comment(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateCommentSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/CalcStar" => {
+                    #[allow(non_camel_case_types)]
+                    struct CalcStarSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::super::req::IdRequest>
+                    for CalcStarSvc<T> {
+                        type Response = super::CalcStarReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::super::req::IdRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::calc_star(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CalcStarSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/GetComment" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCommentSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::GetCommentRequest>
+                    for GetCommentSvc<T> {
+                        type Response = super::GetCommentReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetCommentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::get_comment(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCommentSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/goods.GoodsService/ListComments" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListCommentsSvc<T: GoodsService>(pub Arc<T>);
+                    impl<
+                        T: GoodsService,
+                    > tonic::server::UnaryService<super::ListCommentsRequest>
+                    for ListCommentsSvc<T> {
+                        type Response = super::ListCommentsReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListCommentsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as GoodsService>::list_comments(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListCommentsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for GoodsServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "goods.GoodsService";
+    impl<T> tonic::server::NamedService for GoodsServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}

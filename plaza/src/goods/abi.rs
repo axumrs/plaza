@@ -1,4 +1,7 @@
-use super::model::{Goods, GoodsArgument, GoodsAttr, GoodsComment, GoodsSkuMeta, GoodsStatus};
+use super::model::{
+    Goods, GoodsArgument, GoodsAttr, GoodsComment, GoodsInfo, GoodsSkuMeta, GoodsStarLevel,
+    GoodsStatus,
+};
 use crate::{pb, types};
 
 impl From<pb::goods::GoodsStatus> for GoodsStatus {
@@ -196,6 +199,67 @@ impl Into<pb::goods::GoodsComment> for GoodsComment {
             service_star: self.service_star,
             images: self.images,
             created_at: types::chrono2prost(self.created_at),
+        }
+    }
+}
+
+impl From<pb::goods::GoodsInfo> for GoodsInfo {
+    fn from(v: pb::goods::GoodsInfo) -> Self {
+        Self {
+            goods: v.goods.unwrap_or_default().into(),
+            metas: v.metas.into_iter().map(Into::into).collect(),
+            attrs: v.attrs.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl Into<pb::goods::GoodsInfo> for GoodsInfo {
+    fn into(self) -> pb::goods::GoodsInfo {
+        pb::goods::GoodsInfo {
+            goods: Some(self.goods.into()),
+            metas: self.metas.into_iter().map(Into::into).collect(),
+            attrs: self.attrs.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<pb::goods::GoodsStarLevel> for GoodsStarLevel {
+    fn from(v: pb::goods::GoodsStarLevel) -> Self {
+        match v {
+            pb::goods::GoodsStarLevel::Positive => GoodsStarLevel::Positive,
+            pb::goods::GoodsStarLevel::Neutral => GoodsStarLevel::Neutral,
+            pb::goods::GoodsStarLevel::Negative => GoodsStarLevel::Negative,
+        }
+    }
+}
+
+impl Into<pb::goods::GoodsStarLevel> for GoodsStarLevel {
+    fn into(self) -> pb::goods::GoodsStarLevel {
+        match self {
+            GoodsStarLevel::Positive => pb::goods::GoodsStarLevel::Positive,
+            GoodsStarLevel::Neutral => pb::goods::GoodsStarLevel::Neutral,
+            GoodsStarLevel::Negative => pb::goods::GoodsStarLevel::Negative,
+        }
+    }
+}
+
+impl From<i32> for GoodsStarLevel {
+    fn from(v: i32) -> Self {
+        match v {
+            0 => GoodsStarLevel::Positive,
+            1 => GoodsStarLevel::Neutral,
+            2 => GoodsStarLevel::Negative,
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl Into<i32> for GoodsStarLevel {
+    fn into(self) -> i32 {
+        match self {
+            GoodsStarLevel::Positive => 0,
+            GoodsStarLevel::Neutral => 1,
+            GoodsStarLevel::Negative => 2,
         }
     }
 }
