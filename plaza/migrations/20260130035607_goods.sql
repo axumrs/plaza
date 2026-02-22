@@ -46,7 +46,8 @@ CREATE TABLE IF NOT EXISTS "goods_attrs" ( -- 商品属性
 	-- 体积(cm3)
 	"volume" INTEGER CHECK ("volume" >= 0) NOT NULL DEFAULT 0,
 	-- 重量(kg)
-	"weight" INTEGER CHECK ("weight" >= 0) NOT NULL DEFAULT 0
+	"weight" INTEGER CHECK ("weight" >= 0) NOT NULL DEFAULT 0,
+	"ver" BIGINT NOT NULL DEFAULT 0
 );
 
 

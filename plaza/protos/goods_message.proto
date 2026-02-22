@@ -57,6 +57,7 @@ message goods_attr {
     string bar_code = 8; // 条码
     int32 volume = 9; // 体积（cm3）
     int32 weight = 10; // 重量（kg）
+    int64 ver = 11;
 }
 
 // 商品评论

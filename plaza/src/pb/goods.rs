@@ -105,6 +105,8 @@ pub struct GoodsAttr {
     /// 重量（kg）
     #[prost(int32, tag = "10")]
     pub weight: i32,
+    #[prost(int64, tag = "11")]
+    pub ver: i64,
 }
 /// 商品评论
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

@@ -5,6 +5,7 @@ pub mod captcha;
 pub mod category;
 pub mod config;
 mod err;
+pub mod goods;
 pub mod helper;
 pub mod interceptors;
 pub mod jwt;
