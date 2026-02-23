@@ -250,25 +250,12 @@ pub struct ListReply {
     pub goods: ::prost::alloc::vec::Vec<GoodsInfo>,
 }
 /// 计算评分
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CalcStarReply {
     #[prost(string, tag = "1")]
     pub goods_id: ::prost::alloc::string::String,
-    /// 商品评分
-    #[prost(int32, tag = "2")]
-    pub goods_star: i32,
-    /// 服务评分
-    #[prost(int32, tag = "3")]
-    pub service_star: i32,
-    /// 商品评价级别
-    #[prost(enumeration = "GoodsStarLevel", tag = "4")]
-    pub goods_star_level: i32,
-    /// 服务评价级别
-    #[prost(enumeration = "GoodsStarLevel", tag = "5")]
-    pub service_star_level: i32,
-    /// 综合评价级别
-    #[prost(enumeration = "GoodsStarLevel", tag = "6")]
-    pub star_level: i32,
+    #[prost(double, tag = "2")]
+    pub rate: f64,
 }
 /// 单条评价
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

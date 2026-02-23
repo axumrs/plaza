@@ -71,11 +71,7 @@ enum GoodsStarLevel {
 // 计算评分
 message CalcStarReply {
     string goods_id = 1;
-    int32 goods_star = 2; // 商品评分
-    int32 service_star = 3; // 服务评分
-    GoodsStarLevel goods_star_level = 4; // 商品评价级别
-    GoodsStarLevel service_star_level = 5; // 服务评价级别
-    GoodsStarLevel star_level = 6; // 综合评价级别
+    double rate = 2;
 }
 
 // 单条评价
