@@ -1,7 +1,8 @@
-use sqlx::{PgPool, QueryBuilder, query, query_scalar};
+use sqlx::{PgPool, QueryBuilder, query, query_as, query_scalar};
 use tonic::async_trait;
 
 use crate::{
+    Error,
     goods::model,
     pb::{
         self,
@@ -180,6 +181,65 @@ impl GoodsSrv {
 
         Ok(rows)
     }
+
+    async fn _update_stock(
+        &self,
+        goods_id: String,
+        sku: Vec<String>,
+        stock: i64,
+    ) -> crate::Result<u64> {
+        let sql =
+            r#"UPDATE "goods_attrs" SET "stock"=$1, "ver"=0 WHERE "goods_id"=$2 AND "sku_arr"=$3"#; // 强制将版本置为0
+        let rows = query(sql)
+            .bind(&stock)
+            .bind(&goods_id)
+            .bind(&sku)
+            .execute(&self.pool)
+            .await?
+            .rows_affected();
+        Ok(rows)
+    }
+
+    async fn _decrement_stock(
+        &self,
+        goods_id: String,
+        sku: Vec<String>,
+        stock: Option<i64>,
+    ) -> crate::Result<u64> {
+        let mut tx = self.pool.begin().await?;
+        let attr: Option<model::GoodsAttr> =
+            query_as(r#"SELECT "id","goods_id","sku_arr","stock","price","sales","code","bar_code","volume","weight","ver" FROM "goods_attrs" WHERE "goods_id"=$1 AND "sku_arr"=$2"#)
+                .bind(&goods_id)
+                .bind(&sku)
+                .fetch_optional(&mut *tx)
+                .await?;
+        let attr = match attr {
+            Some(v) => v,
+            None => return Err(Error::Custom("不存在的记录")),
+        };
+
+        // 更新
+        let sql = r#"UPDATE "goods_attrs" SET "stock" = "stock" - $1, "ver" = $4 + 1 WHERE "goods_id" = $2 AND "sku_arr"=$3 AND "ver" = $4"#;
+        let stock = stock.unwrap_or(1);
+
+        let rows = match query(sql)
+            .bind(&stock)
+            .bind(&goods_id)
+            .bind(&sku)
+            .bind(&attr.ver)
+            .execute(&mut *tx)
+            .await
+        {
+            Ok(r) => r.rows_affected(),
+            Err(e) => {
+                tx.rollback().await?;
+                return Err(e.into());
+            }
+        };
+        tx.commit().await?;
+
+        Ok(rows)
+    }
 }
 
 #[async_trait]
@@ -267,14 +327,41 @@ impl pb::goods::goods_service_server::GoodsService for GoodsSrv {
         &self,
         request: tonic::Request<UpdateStockRequest>,
     ) -> std::result::Result<tonic::Response<resp::AffReply>, tonic::Status> {
-        unimplemented!()
+        let UpdateStockRequest {
+            goods_id,
+            sku,
+            stock,
+        } = request.into_inner();
+        let rows = self
+            ._update_stock(goods_id, sku, stock)
+            .await
+            .map_err(|e| {
+                tracing::error!("update stock error: {}", e);
+                tonic::Status::internal(e.to_string())
+            })?;
+
+        Ok(tonic::Response::new(resp::AffReply { rows }))
     }
     /// 扣减库存
     async fn decrement_stock(
         &self,
         request: tonic::Request<DecrementStockRequest>,
     ) -> std::result::Result<tonic::Response<resp::AffReply>, tonic::Status> {
-        unimplemented!()
+        let DecrementStockRequest {
+            goods_id,
+            sku,
+            stock_value,
+        } = request.into_inner();
+
+        let rows = self
+            ._decrement_stock(goods_id, sku, stock_value)
+            .await
+            .map_err(|e| {
+                tracing::error!("decrement stock error: {}", e);
+                tonic::Status::internal(e.to_string())
+            })?;
+
+        Ok(tonic::Response::new(resp::AffReply { rows }))
     }
     /// 获取SKU
     async fn get_sku(
