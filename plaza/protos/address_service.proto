@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package address;
+
+import "address_message.proto";
+import "resp.proto";
+import "paginate.proto";
+
+// 删除
+message DeleteRequest {
+    string id = 1;
+    optional string user_id = 2;
+}
+
+// 获取单个地址
+message GetRequest{
+    string id = 1;
+    optional string user_id = 2;
+}
+message OptionAddressReply{
+    optional Address address = 1;
+}
+
+// 地址列表
+message ListRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string user_id = 2;
+    optional string consignee = 3;
+    optional string phone = 4;
+    optional string address = 5;
+}
+message ListReply{
+    paginate.Paginate paginate = 1;
+    repeated Address address_list = 2;
+}
+
+// 设为默认
+message SetDefaultRequest{
+    string id = 1;
+    string user_id = 2;
+}
+
+// 获取默认地址
+message GetDefaultRequest {
+    string user_id = 1;
+}
+
+service AddressService {
+    // 创建
+    rpc Create(Address) returns (resp.IdReply);
+    // 修改
+    rpc Update(Address) returns (resp.AffReply);
+    // 删除
+    rpc Delete(DeleteRequest) returns (resp.AffReply);
+    // 获取单个地址
+    rpc Get(GetRequest) returns (OptionAddressReply);
+    // 地址列表
+    rpc List(ListRequest) returns (ListReply);
+    // 设为默认
+    rpc SetDefault(SetDefaultRequest) returns (resp.AffReply);
+    // 获取默认地址
+    rpc GetDefault(GetDefaultRequest) returns (OptionAddressReply);
+}

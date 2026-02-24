@@ -1,3 +1,4 @@
+pub mod address;
 pub mod api_resp;
 pub mod audit;
 pub mod brand;

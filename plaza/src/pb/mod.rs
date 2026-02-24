@@ -1,3 +1,4 @@
+pub mod address;
 pub mod audit;
 pub mod brand;
 pub mod category;

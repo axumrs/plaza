@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package address;
+
+import "google/protobuf/timestamp.proto";
+
+// 收货地址
+message Address {
+  // 地址唯一ID (对应 CHAR(20))
+  string id = 1;
+
+  // 关联的用户ID
+  string user_id = 2;
+
+  // 是否为默认收货地址
+  bool is_default = 3;
+
+  // 收货人姓名
+  string consignee = 4;
+
+  // 联系电话
+  string phone = 5;
+
+  // 详细地址 (街道、门牌号等)
+  string address = 6;
+
+  // 省份/直辖市
+  string province = 7;
+
+  // 城市
+  string city = 8;
+
+  // 县/区
+  string county = 9;
+
+  // 邮政编码 (校验长度为6位)
+  string post_code = 10;
+
+  // 创建/添加时间
+  google.protobuf.Timestamp created_at = 11;
+}
