@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package invoice;
+
+import "invoice_message.proto";
+import "resp.proto";
+import "req.proto";
+import "paginate.proto";
+
+// 获取单条
+message GetReply{
+    optional Invoice invoice = 1;
+}
+
+// 列表
+message ListRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string user_id = 2;
+    optional string order_id = 3;
+    optional string shop_id = 4;
+    optional InvoiceStatus status = 5;
+    optional InvoiceKind kind = 6;
+    optional string pay_tx_id = 7;
+}
+message ListReply{
+    paginate.Paginate paginate = 1;
+    repeated Invoice invoices = 2;
+}
+
+// 修改状态
+message UpdateStatusRequest{
+    string id = 1;
+    InvoiceStatus status = 2;
+}
+
+service InvoiceService {
+    // 创建
+    rpc Create(Invoice) returns (resp.IdReply);
+    // 获取单条
+    rpc Get(req.IdRequest) returns (GetReply);
+    // 列表
+    rpc List(ListRequest) returns (ListReply);
+    // 修改状态
+    rpc UpdateStatus(UpdateStatusRequest) returns (resp.AffReply);
+    // 完成支付
+    rpc CompletePaid(req.IdRequest) returns (resp.AffReply);
+}

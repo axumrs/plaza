@@ -10,6 +10,7 @@ mod err;
 pub mod goods;
 pub mod helper;
 pub mod interceptors;
+pub mod invoice;
 pub mod jwt;
 pub mod mail;
 pub mod merchant;

@@ -4,6 +4,7 @@ pub mod brand;
 pub mod cart;
 pub mod category;
 pub mod goods;
+pub mod invoice;
 pub mod merchant;
 pub mod order;
 pub mod paginate;
