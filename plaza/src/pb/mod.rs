@@ -1,6 +1,7 @@
 pub mod address;
 pub mod audit;
 pub mod brand;
+pub mod cart;
 pub mod category;
 pub mod goods;
 pub mod merchant;

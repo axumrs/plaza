@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package cart;
+
+import "cart_message.proto";
+import "resp.proto";
+
+message CartMetaRequest {
+    string user_id = 1;         // 用户ID
+    string shop_id = 2;         // 店铺ID
+}
+
+// 获取
+message GetReply {
+    optional Cart cart = 1;
+}
+
+service CartService {
+    // 同步
+    rpc Sync(Cart) returns (resp.AffReply);
+    // 获取
+    rpc Get(CartMetaRequest) returns(GetReply);
+    // 清空
+    rpc Clean(CartMetaRequest) returns(resp.AffReply);
+}

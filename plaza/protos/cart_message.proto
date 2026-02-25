@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package cart;
+
+import "google/protobuf/timestamp.proto";
+
+// 购物车单项明细
+message CartItem {
+  string goods_id = 1;        // 商品ID
+  string sku_id = 2;          // SKU ID
+  int32 quantity = 3;         // 数量
+  int64 price = 4;            // 单价 (分)
+  int64 real_price = 5;       // 实际价格 (分)
+  string goods_full_name = 6; // 商品名称(含SKU)
+  string goods_image = 7;     // 商品图片
+}
+
+// 购物车表记录 (按用户和店铺分组)
+message Cart {
+  string user_id = 1;         // 用户ID
+  string shop_id = 2;         // 店铺ID
+  repeated CartItem items = 3; // 商品列表
+  google.protobuf.Timestamp created_at = 4;
+}

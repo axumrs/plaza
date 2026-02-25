@@ -3,6 +3,7 @@ pub mod api_resp;
 pub mod audit;
 pub mod brand;
 pub mod captcha;
+pub mod cart;
 pub mod category;
 pub mod config;
 mod err;
