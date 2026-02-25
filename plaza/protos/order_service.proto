@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package order;
+
+import "order_message.proto"; 
+import "resp.proto"; 
+import "req.proto"; 
+import "paginate.proto";
+
+// 获取单条
+message GetReply{
+    optional Order order = 1;
+}
+
+// 列表
+message ListRequest{
+    paginate.PaginateRequest pr = 1;
+    optional string user_id = 2;
+    optional string shop_id = 3;
+    optional OrderStatus status = 4;
+    optional string consignee_name = 5;
+    optional string consignee_phone = 6;
+    optional string consignee_address = 7;
+    optional string goods_name = 8;
+    optional string goods_id = 9;
+    optional string sku_id = 10;
+    optional string sku_name = 11;
+}
+message ListReply{
+    paginate.Paginate paginate = 1;
+    repeated Order orders = 2;
+}
+
+// 更新地址
+message UpdateAddressRequest{
+    string id = 1;
+    string consignee_name = 2;
+    string consignee_phone = 3;
+    string consignee_address = 4;
+}
+
+// 更新状态
+message UpdateStatusRequest{
+    string id = 1;
+    OrderStatus status = 2;
+}
+
+// 更新价格
+message UpdateAmountRequest{
+    string id = 1;
+    int64 total_amount = 2;
+    int64 freight_amount = 3;
+}
+
+// 完成支付
+message CompletePayRequest {
+    string id = 1;
+    int64 pay_amount = 2;
+}
+
+service OrderService {
+    // 创建
+    rpc Create(Order) returns (resp.IdReply);
+    // 获取单条
+    rpc Get(req.IdRequest) returns (GetReply);
+    // 列表
+    rpc List(ListRequest) returns (ListReply);
+    // 更新地址
+    rpc UpdateAddress(UpdateAddressRequest) returns (resp.AffReply);
+    // 更新状态
+    rpc UpdateStatus(UpdateStatusRequest) returns (resp.AffReply);
+    // 更新价格
+    rpc UpdateAmount(UpdateAmountRequest) returns (resp.AffReply);
+    // 完成支付
+    rpc CompletePay(CompletePayRequest) returns (resp.AffReply);
+}

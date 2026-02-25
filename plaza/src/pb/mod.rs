@@ -5,6 +5,7 @@ pub mod cart;
 pub mod category;
 pub mod goods;
 pub mod merchant;
+pub mod order;
 pub mod paginate;
 pub mod range;
 pub mod req;

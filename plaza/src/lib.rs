@@ -14,6 +14,7 @@ pub mod jwt;
 pub mod mail;
 pub mod merchant;
 pub mod mw;
+pub mod order;
 pub mod pb;
 pub mod rds;
 pub mod shop;

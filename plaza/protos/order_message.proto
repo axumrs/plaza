@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package order;
+
+import "google/protobuf/timestamp.proto";
+import "goods_message.proto";
+import "cart_message.proto"; 
+
+// 订单状态
+enum OrderStatus {
+  PendingPayment = 0;
+  PendingShipment = 1;
+  Shipped = 2;
+  Completed = 3;
+  Cancelled = 4;
+  Refunded = 5;
+}
+
+// 支付方式
+enum PaymentMethod {
+  Web3 = 0;
+  WechatPay = 1;
+  Alipay = 2;
+  Balance = 3;
+  CreditCard = 4;
+}
+// 订单项快照
+message OrderItemSnap {
+    string goods_id = 1;
+    string shop_id = 2;
+    bool is_vir = 3;
+    string category_id = 4;
+    string name = 5;
+    repeated string images = 6;
+    goods.GoodsStatus status = 7; // 映射自 goods_status
+    string detail = 8;
+    bool comment_need_audit = 9;
+    repeated string service_guarantee = 10;
+    repeated string tags = 11;
+    
+    repeated goods.GoodsArgument arguments = 12; 
+    repeated goods.GoodsSkuMeta sku_meta = 13;
+    
+    int32 fare = 14;
+    repeated string recommendations = 15;
+
+    string sku_id = 16;
+    repeated string sku_arr = 17;
+
+    string goods_full_name = 18;
+    string goods_image = 19;
+    int64 price = 20;
+    int64 real_price = 21;
+}
+
+// 订单主消息
+message Order {
+    string id = 1;
+    string user_id = 2;
+    string shop_id = 3;
+    int64 total_amount = 4;
+    int64 pay_amount = 5;
+    int64 freight_amount = 6;
+    OrderStatus status = 7;
+    PaymentMethod pay_method = 8;
+    string consignee_name = 9;
+    string consignee_phone = 10;
+    string consignee_address = 11;
+    repeated OrderItemSnap items = 12;
+    repeated cart.CartItem cart_items = 13;
+
+    google.protobuf.Timestamp pay_at = 14;
+    google.protobuf.Timestamp ship_at = 15;
+    google.protobuf.Timestamp completed_at = 16;
+    google.protobuf.Timestamp created_at = 17;
+}
